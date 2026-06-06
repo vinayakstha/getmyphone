@@ -1,10 +1,15 @@
+import 'package:client/features/splash/presentation/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return MaterialApp(
+      title: 'getmyphone',
+      debugShowCheckedModeBanner: false,
+      home: const SplashScreen(),
+    );
   }
 }
