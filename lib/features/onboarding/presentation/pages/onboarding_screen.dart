@@ -1,3 +1,5 @@
+import 'package:client/app/routes/app_routes.dart';
+import 'package:client/features/auth/presentation/pages/signup_screen.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -51,7 +53,7 @@ class OnboardingScreen extends StatelessWidget {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigate to next screen
+                    AppRoutes.pushReplacement(context, const SignupScreen());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1565D8),

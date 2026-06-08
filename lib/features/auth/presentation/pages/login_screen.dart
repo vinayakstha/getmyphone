@@ -1,3 +1,5 @@
+import 'package:client/app/routes/app_routes.dart';
+import 'package:client/features/auth/presentation/pages/signup_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -22,14 +24,14 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 60),
 
               // Logo
-              Image.asset('assets/images/logo.png', height: 80),
+              Image.asset('assets/images/logo.png', height: 120),
 
               const SizedBox(height: 50),
 
               const Text(
                 'Welcome back!',
                 style: TextStyle(
-                  fontSize: 38,
+                  fontSize: 27,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
@@ -40,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Email Field
               TextField(
                 decoration: InputDecoration(
-                  hintText: 'name@example.com',
+                  hintText: 'E-mail',
                   prefixIcon: const Icon(Icons.mail_outline),
                   filled: true,
                   fillColor: Colors.white,
@@ -61,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
+                  hintText: "Password",
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -96,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {},
                   child: const Text(
                     'Forgot Password?',
-                    style: TextStyle(color: Color(0xFF1565D8)),
+                    style: TextStyle(color: Color(0xFF1565D8), fontSize: 16),
                   ),
                 ),
               ),
@@ -138,7 +141,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      AppRoutes.push(context, SignupScreen());
+                    },
                     child: const Text(
                       'Sign Up',
                       style: TextStyle(
