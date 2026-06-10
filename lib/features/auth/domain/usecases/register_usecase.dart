@@ -5,14 +5,14 @@ import 'package:client/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
-class SignupUsecaseParams extends Equatable {
+class RegisterUsecaseParams extends Equatable {
   final String fullName;
   final String email;
   final String phoneNumber;
   final String password;
   final String confirmPassword;
 
-  const SignupUsecaseParams({
+  const RegisterUsecaseParams({
     required this.fullName,
     required this.email,
     required this.phoneNumber,
@@ -29,12 +29,13 @@ class SignupUsecaseParams extends Equatable {
   ];
 }
 
-class SignupUsecase implements UsecaseWithParams<bool, SignupUsecaseParams> {
+class RegisterUsecase
+    implements UsecaseWithParams<bool, RegisterUsecaseParams> {
   final IAuthRepository _authRepository;
-  SignupUsecase({required IAuthRepository authRepository})
+  RegisterUsecase({required IAuthRepository authRepository})
     : _authRepository = authRepository;
   @override
-  Future<Either<Failure, bool>> call(SignupUsecaseParams params) {
+  Future<Either<Failure, bool>> call(RegisterUsecaseParams params) {
     final entity = AuthEntity(
       fullName: params.fullName,
       email: params.email,

@@ -1,6 +1,11 @@
 import 'package:client/features/auth/domain/entities/auth_entity.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'auth_api_model.g.dart';
+
+@JsonSerializable()
 class AuthApiModel {
+  @JsonKey(name: '_id')
   final String? id;
   final String fullName;
   final String email;
@@ -22,6 +27,11 @@ class AuthApiModel {
     this.ratingAverage = 0,
     this.ratingCount = 0,
   });
+
+  factory AuthApiModel.fromJson(Map<String, dynamic> json) =>
+      _$AuthApiModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AuthApiModelToJson(this);
 
   AuthEntity toEntity() {
     return AuthEntity(

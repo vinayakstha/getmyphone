@@ -34,7 +34,6 @@ class UserSessionService {
     required String email,
     required String fullName,
     required String phoneNumber,
-    required String token,
     String? profilePicture,
     double ratingAverage = 0,
     int ratingCount = 0,
@@ -44,7 +43,6 @@ class UserSessionService {
     await _prefs.setString(_keyUserEmail, email);
     await _prefs.setString(_keyUserFullName, fullName);
     await _prefs.setString(_keyUserPhoneNumber, phoneNumber);
-    await _prefs.setString(_keyToken, token);
     await _prefs.setDouble(_keyUserRatingAverage, ratingAverage);
     await _prefs.setInt(_keyUserRatingCount, ratingCount);
     if (profilePicture != null) {
