@@ -67,4 +67,14 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
     }
     return user;
   }
+
+  @override
+  Future<bool> logout() async {
+    try {
+      await _userSessionService.clearUserSession();
+      return Future.value(true);
+    } catch (e) {
+      return Future.value(false);
+    }
+  }
 }
