@@ -1,20 +1,74 @@
 import 'package:client/app/routes/app_routes.dart';
 import 'package:client/features/auth/presentation/pages/login_screen.dart';
+import 'package:client/features/auth/presentation/state/auth_state.dart';
+import 'package:client/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignupScreen extends StatefulWidget {
+class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupScreenState extends ConsumerState<SignupScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
+  final _fullNameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _phoneCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  final _confirmPasswordCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _fullNameCtrl.dispose();
+    _emailCtrl.dispose();
+    _phoneCtrl.dispose();
+    _passwordCtrl.dispose();
+    _confirmPasswordCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSignup() async {
+    ref
+        .read(authViewModelProvider.notifier)
+        .register(
+          fullName: _fullNameCtrl.text.trim(),
+          email: _emailCtrl.text.trim(),
+          phoneNumber: _phoneCtrl.text.trim(),
+          password: _passwordCtrl.text,
+          confirmPassword: _confirmPasswordCtrl.text,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authViewModelProvider);
+
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (previous?.status != next.status) {
+        if (next.status == AuthStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(next.errorMessage ?? 'Something went wrong'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (next.status == AuthStatus.registered) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Registration successful!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          AppRoutes.push(context, LoginScreen());
+        }
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -38,7 +92,6 @@ class _SignupScreenState extends State<SignupScreen> {
               // Logo
               Image.asset('assets/images/logo.png', height: 120),
 
-              // const SizedBox(height: 30),
               const Text(
                 'Create your account',
                 style: TextStyle(
@@ -52,6 +105,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // Full Name
               TextField(
+                controller: _fullNameCtrl,
                 decoration: InputDecoration(
                   hintText: 'Full Name',
                   prefixIcon: const Icon(Icons.person_outline),
@@ -71,6 +125,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // Email
               TextField(
+                controller: _emailCtrl,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   hintText: 'Email',
@@ -91,6 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // Phone
               TextField(
+                controller: _phoneCtrl,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   hintText: 'Phone Number',
@@ -111,6 +167,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // Password
               TextField(
+                controller: _passwordCtrl,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   hintText: 'Password',
@@ -121,11 +178,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
                   ),
                   filled: true,
                   fillColor: Colors.white,
@@ -143,6 +197,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // Confirm Password
               TextField(
+                controller: _confirmPasswordCtrl,
                 obscureText: _obscureConfirmPassword,
                 decoration: InputDecoration(
                   hintText: 'Confirm Password',
@@ -153,11 +208,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
-                    },
+                    onPressed: () => setState(
+                      () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                    ),
                   ),
                   filled: true,
                   fillColor: Colors.white,
@@ -178,7 +231,9 @@ class _SignupScreenState extends State<SignupScreen> {
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: authState.status == AuthStatus.loading
+                      ? null
+                      : _handleSignup,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1565D8),
                     shape: RoundedRectangleBorder(
@@ -186,14 +241,16 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Create Account',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: authState.status == AuthStatus.loading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Create Account',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
 
@@ -207,9 +264,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      AppRoutes.push(context, LoginScreen());
-                    },
+                    onTap: () => AppRoutes.push(context, LoginScreen()),
                     child: const Text(
                       'Login',
                       style: TextStyle(
@@ -221,6 +276,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ],
               ),
+
+              const SizedBox(height: 20),
             ],
           ),
         ),

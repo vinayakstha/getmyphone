@@ -1,9 +1,11 @@
 import 'package:client/core/error/failures.dart';
 import 'package:client/core/usecase/app_usecase.dart';
+import 'package:client/features/auth/data/repository/auth_repository.dart';
 import 'package:client/features/auth/domain/entities/auth_entity.dart';
 import 'package:client/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RegisterUsecaseParams extends Equatable {
   final String fullName;
@@ -28,6 +30,11 @@ class RegisterUsecaseParams extends Equatable {
     confirmPassword,
   ];
 }
+
+final registerUsecaseProvider = Provider<RegisterUsecase>((ref) {
+  final authRepository = ref.read(authRepositoryProvider);
+  return RegisterUsecase(authRepository: authRepository);
+});
 
 class RegisterUsecase
     implements UsecaseWithParams<bool, RegisterUsecaseParams> {

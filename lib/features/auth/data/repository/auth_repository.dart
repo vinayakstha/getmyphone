@@ -1,11 +1,23 @@
 import 'package:client/core/error/failures.dart';
 import 'package:client/core/services/connectivity/network_info.dart';
 import 'package:client/features/auth/data/datasource/auth_datasource.dart';
+import 'package:client/features/auth/data/datasource/remote/auth_remote_datasource.dart';
 import 'package:client/features/auth/data/model/auth_api_model.dart';
 import 'package:client/features/auth/domain/entities/auth_entity.dart';
 import 'package:client/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+//provider
+final authRepositoryProvider = Provider<IAuthRepository>((ref) {
+  final authRemoteDataSource = ref.read(authRemoteDataSourceProvider);
+  final networkInfo = ref.read(networkInfoProvider);
+  return AuthRepository(
+    authRemoteDataSource: authRemoteDataSource,
+    networkInfo: networkInfo,
+  );
+});
 
 class AuthRepository implements IAuthRepository {
   final IAuthRemoteDataSource _authRemoteDataSource;

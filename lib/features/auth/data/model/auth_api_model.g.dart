@@ -18,15 +18,23 @@ AuthApiModel _$AuthApiModelFromJson(Map<String, dynamic> json) => AuthApiModel(
       ratingCount: (json['ratingCount'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$AuthApiModelToJson(AuthApiModel instance) =>
-    <String, dynamic>{
-      '_id': instance.id,
-      'fullName': instance.fullName,
-      'email': instance.email,
-      'phoneNumber': instance.phoneNumber,
-      'password': instance.password,
-      'confirmPassword': instance.confirmPassword,
-      'profilePicture': instance.profilePicture,
-      'ratingAverage': instance.ratingAverage,
-      'ratingCount': instance.ratingCount,
-    };
+Map<String, dynamic> _$AuthApiModelToJson(AuthApiModel instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('_id', instance.id);
+  val['fullName'] = instance.fullName;
+  val['email'] = instance.email;
+  val['phoneNumber'] = instance.phoneNumber;
+  val['password'] = instance.password;
+  writeNotNull('confirmPassword', instance.confirmPassword);
+  writeNotNull('profilePicture', instance.profilePicture);
+  val['ratingAverage'] = instance.ratingAverage;
+  val['ratingCount'] = instance.ratingCount;
+  return val;
+}

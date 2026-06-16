@@ -1,13 +1,14 @@
 import 'package:client/core/error/failures.dart';
 import 'package:client/core/usecase/app_usecase.dart';
+import 'package:client/features/auth/data/repository/auth_repository.dart';
 import 'package:client/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// final logoutUsecaseProvider = Provider<LogoutUsecase>((ref){
-//   final authRepository = ref.read(authRepositoryProvider);
-//   return LogoutUsecase(authRepository: authRepository);
-// });
+final logoutUsecaseProvider = Provider<LogoutUsecase>((ref) {
+  final authRepository = ref.read(authRepositoryProvider);
+  return LogoutUsecase(authRepository: authRepository);
+});
 
 class LogoutUsecase implements UsecaseWithoutParams {
   final IAuthRepository _authRepository;
