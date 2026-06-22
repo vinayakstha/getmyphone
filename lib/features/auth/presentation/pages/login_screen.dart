@@ -1,19 +1,56 @@
 import 'package:client/app/routes/app_routes.dart';
 import 'package:client/features/auth/presentation/pages/signup_screen.dart';
+import 'package:client/features/auth/presentation/state/auth_state.dart';
+import 'package:client/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:client/features/home/presentation/pages/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _obscurePassword = true;
+
+  final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _passwordCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    ref
+        .read(authViewModelProvider.notifier)
+        .login(email: _emailCtrl.text.trim(), password: _passwordCtrl.text);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authViewModelProvider);
+
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (previous?.status != next.status) {
+        if (next.status == AuthStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(next.errorMessage ?? 'Something went wrong'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (next.status == AuthStatus.authenticated) {
+          AppRoutes.pushAndRemoveUntil(context, const HomeScreen());
+        }
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -41,6 +78,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Email Field
               TextField(
+                controller: _emailCtrl,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   hintText: 'E-mail',
                   prefixIcon: const Icon(Icons.mail_outline),
@@ -61,6 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Password Field
               TextField(
+                controller: _passwordCtrl,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   hintText: "Password",
@@ -71,11 +111,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
                   ),
                   filled: true,
                   fillColor: Colors.white,
@@ -111,7 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: authState.status == AuthStatus.loading
+                      ? null
+                      : _handleLogin,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1565D8),
                     shape: RoundedRectangleBorder(
@@ -119,14 +158,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: authState.status == AuthStatus.loading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
 
@@ -137,13 +178,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Don’t have an account? ",
+                    "Don't have an account? ",
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      AppRoutes.push(context, SignupScreen());
-                    },
+                    onTap: () => AppRoutes.push(context, const SignupScreen()),
                     child: const Text(
                       'Sign Up',
                       style: TextStyle(
