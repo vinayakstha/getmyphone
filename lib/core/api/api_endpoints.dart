@@ -5,13 +5,6 @@ import 'package:flutter/foundation.dart';
 class ApiEndpoints {
   ApiEndpoints._();
 
-  // Base URL - change this for production
-  // static const String baseUrl = 'http://10.0.2.2:5050/api/';
-  //static const String baseUrl = 'http://localhost:3000/api/v1';
-  // For Android Emulator use: 'http://10.0.2.2:3000/api/v1'
-  // For iOS Simulator use: 'http://localhost:5000/api/v1'
-  // For Physical Device use your computer's IP: 'http://192.168.x.x:5000/api/v1'
-
   static const bool isPhysicalDevice = false;
 
   static const String compIpAddress = "192.168.18.3";
@@ -39,41 +32,13 @@ class ApiEndpoints {
   // ============ Auth Endpoints ============
   static const String register = '/auth/register';
   static const String login = '/auth/login';
-  static const String updateProfile = '/user/update-profile';
-  static const String getUserById = '/user/';
-  static const String getCurrentUser = '/user/me';
+  // static const String updateProfile = '/user/update-profile';
+  // static const String getUserById = '/user/';
+  // static const String getCurrentUser = '/user/me';
 
   // ============ Category Endpoints ==========
   static const String getAllCategories = '/category/';
   static const String getCategoryById = '/category/';
-
-  // =========== Service Endpoints ==============
-  static String getServicesByCategory(String categoryId) {
-    return '/service/category/$categoryId';
-  }
-
-  static String getServiceById(String serviceId) {
-    return '/service/$serviceId';
-  }
-
-  //=========== Booking Endpoints ==============
-  static String createBooking = '/booking/';
-  static const String getBookingsByUser = '/booking/';
-  static String deleteBooking(String bookingId) {
-    return '/booking/$bookingId';
-  }
-
-  //========== Favourite Endpoints ==============
-  static String createFavourite = '/favourite/';
-  static String deleteFavourite(String favouriteId) {
-    return '/favourite/$favouriteId';
-  }
-
-  // =========== Payment Endpoints ==============
-  static const String initiatePayment = '/khalti/initiate';
-  static const String verifyPayment = '/khalti/verify';
-
-  static const getFavouritesByUser = '/favourite/';
 
   static String getImageUrl(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {

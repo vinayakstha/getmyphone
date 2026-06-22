@@ -1,4 +1,11 @@
+import 'package:client/core/services/storage/user_session_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final tokenServiceProvider = Provider<TokenService>((ref) {
+  final prefs = ref.read(sharedPreferencesProvider);
+  return TokenService(prefs: prefs);
+});
 
 class TokenService {
   final SharedPreferences _prefs;
