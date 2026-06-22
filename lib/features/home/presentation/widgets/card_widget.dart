@@ -8,7 +8,7 @@ class CardWidget extends StatelessWidget {
     return Card(
       elevation: 8,
       shadowColor: Colors.black26,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       clipBehavior: Clip.antiAlias,
       child: SizedBox(
         width: double.infinity,
