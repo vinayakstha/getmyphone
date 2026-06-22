@@ -1,4 +1,5 @@
 import 'package:client/app/routes/app_routes.dart';
+import 'package:client/core/utils/snackbar_utils.dart';
 import 'package:client/features/auth/presentation/pages/login_screen.dart';
 import 'package:client/features/auth/presentation/state/auth_state.dart';
 import 'package:client/features/auth/presentation/view_model/auth_view_model.dart';
@@ -51,20 +52,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (previous?.status != next.status) {
         if (next.status == AuthStatus.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(next.errorMessage ?? 'Something went wrong'),
-              backgroundColor: Colors.red,
-            ),
+          SnackbarUtils.showError(
+            context,
+            next.errorMessage ?? 'Something went wrong',
           );
         } else if (next.status == AuthStatus.registered) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Registration successful!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          AppRoutes.push(context, LoginScreen());
+          SnackbarUtils.showSuccess(context, 'Registration successful!');
+          AppRoutes.pushReplacement(context, const LoginScreen());
         }
       }
     });
@@ -82,7 +76,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                  onPressed: () => AppRoutes.push(context, LoginScreen()),
+                  onPressed: () =>
+                      AppRoutes.pushReplacement(context, const LoginScreen()),
                   icon: const Icon(Icons.arrow_back),
                 ),
               ),
@@ -264,7 +259,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   GestureDetector(
-                    onTap: () => AppRoutes.push(context, LoginScreen()),
+                    onTap: () =>
+                        AppRoutes.pushReplacement(context, const LoginScreen()),
                     child: const Text(
                       'Login',
                       style: TextStyle(

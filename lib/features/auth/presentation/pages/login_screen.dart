@@ -1,4 +1,5 @@
 import 'package:client/app/routes/app_routes.dart';
+import 'package:client/core/utils/snackbar_utils.dart';
 import 'package:client/features/auth/presentation/pages/signup_screen.dart';
 import 'package:client/features/auth/presentation/state/auth_state.dart';
 import 'package:client/features/auth/presentation/view_model/auth_view_model.dart';
@@ -39,11 +40,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (previous?.status != next.status) {
         if (next.status == AuthStatus.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(next.errorMessage ?? 'Something went wrong'),
-              backgroundColor: Colors.red,
-            ),
+          SnackbarUtils.showError(
+            context,
+            next.errorMessage ?? 'Something went wrong',
           );
         } else if (next.status == AuthStatus.authenticated) {
           AppRoutes.pushAndRemoveUntil(context, const HomeScreen());
