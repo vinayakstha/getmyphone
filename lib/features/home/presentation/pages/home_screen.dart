@@ -58,7 +58,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onPressed: () {},
                     icon: const Icon(
                       Icons.notifications_none,
-                      color: Color(0xFF0464D4),
+                      color: Color.fromARGB(255, 118, 116, 116),
                     ),
                   ),
                 ],
@@ -88,7 +88,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               const SizedBox(height: 16),
 
-              // CATEGORIES LABEL
               // CATEGORIES LABEL
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
