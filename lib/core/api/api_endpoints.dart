@@ -32,13 +32,20 @@ class ApiEndpoints {
   // ============ Auth Endpoints ============
   static const String register = '/auth/register';
   static const String login = '/auth/login';
-  // static const String updateProfile = '/user/update-profile';
-  // static const String getUserById = '/user/';
-  // static const String getCurrentUser = '/user/me';
 
   // ============ Category Endpoints ==========
   static const String getAllCategories = '/category/';
   static const String getCategoryById = '/category/';
+
+  // ============ Phone Endpoints ==========
+  static const String createPhone = '/phone';
+  static const String getAllPhones = '/phone';
+  static const String getPhoneById = '/phone';
+  static const String getPhonesBySeller = '/phone/my-listings';
+  static const String getPhonesByBrand = '/phone/brand';
+  static const String getPhonesNearLocation = '/phone/near';
+  static const String updatePhone = '/phone';
+  static const String deletePhone = '/phone';
 
   static String getImageUrl(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
@@ -47,7 +54,6 @@ class ApiEndpoints {
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
-    // Adjust the path based on your backend setup
-    return '${baseUrl.replaceAll('/api', '')}/uploads/$imagePath';
+    return '${baseUrl.replaceAll('/api', '')}$imagePath';
   }
 }
