@@ -2,8 +2,15 @@ import 'package:client/core/error/failures.dart';
 import 'package:client/core/usecase/app_usecase.dart';
 import 'package:client/features/home/domain/entities/category_entity.dart';
 import 'package:client/features/home/domain/repositories/category_repository.dart';
+import 'package:client/features/home/data/repository/category_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final getCategoryByIdUsecaseProvider = Provider<GetCategoryByIdUsecase>((ref) {
+  final categoryRepository = ref.read(categoryRepositoryProvider);
+  return GetCategoryByIdUsecase(categoryRepository: categoryRepository);
+});
 
 class GetCategoryByIdParams extends Equatable {
   final String id;
