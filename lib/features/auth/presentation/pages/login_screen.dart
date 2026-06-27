@@ -3,7 +3,7 @@ import 'package:client/core/utils/snackbar_utils.dart';
 import 'package:client/features/auth/presentation/pages/signup_screen.dart';
 import 'package:client/features/auth/presentation/state/auth_state.dart';
 import 'package:client/features/auth/presentation/view_model/auth_view_model.dart';
-import 'package:client/features/home/presentation/pages/home_screen.dart';
+import 'package:client/features/nav/presentation/pages/navigation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -45,7 +45,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             next.errorMessage ?? 'Something went wrong',
           );
         } else if (next.status == AuthStatus.authenticated) {
-          AppRoutes.pushAndRemoveUntil(context, const HomeScreen());
+          AppRoutes.pushAndRemoveUntil(context, const NavigationScreen());
         }
       }
     });
