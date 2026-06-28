@@ -1,10 +1,17 @@
+import 'package:client/core/utils/snackbar_utils.dart';
+import 'package:client/features/phone/domain/entities/phone_entity.dart';
+import 'package:client/features/phone/presentation/state/phone_state.dart';
+import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PostFormScreenThree extends StatefulWidget {
+class PostFormScreenThree extends ConsumerStatefulWidget {
   final String title;
   final String? photoPath;
   final String brand;
   final String condition;
+  final double latitude;
+  final double longitude;
   final String description;
   final String cpu;
   final String storage;
@@ -20,6 +27,8 @@ class PostFormScreenThree extends StatefulWidget {
     this.photoPath,
     required this.brand,
     required this.condition,
+    required this.latitude,
+    required this.longitude,
     required this.description,
     required this.cpu,
     required this.storage,
@@ -31,10 +40,11 @@ class PostFormScreenThree extends StatefulWidget {
   });
 
   @override
-  State<PostFormScreenThree> createState() => _PostFormScreenThreeState();
+  ConsumerState<PostFormScreenThree> createState() =>
+      _PostFormScreenThreeState();
 }
 
-class _PostFormScreenThreeState extends State<PostFormScreenThree> {
+class _PostFormScreenThreeState extends ConsumerState<PostFormScreenThree> {
   final _priceCtrl = TextEditingController();
   String? selectedNegotiable;
 
@@ -92,7 +102,7 @@ class _PostFormScreenThreeState extends State<PostFormScreenThree> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: DropdownButtonFormField<String>(
-        value: value,
+        initialValue: value,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
@@ -123,22 +133,58 @@ class _PostFormScreenThreeState extends State<PostFormScreenThree> {
     );
   }
 
-  void _handlePostAd() {
+  Future<void> _handlePostAd() async {
     if (selectedNegotiable == null || _priceCtrl.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill in all fields'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      SnackbarUtils.showError(context, 'Please fill in all fields');
       return;
     }
 
-    // TODO: call view model to post ad
+    final phone = PhoneEntity(
+      title: widget.title,
+      photo: widget.photoPath,
+      brand: widget.brand,
+      condition: widget.condition,
+      location: LocationEntity(
+        type: 'Point',
+        coordinates: [widget.longitude, widget.latitude],
+      ),
+      description: widget.description,
+      cpu: widget.cpu,
+      storage: widget.storage,
+      ram: widget.ram,
+      screen: widget.screen,
+      battery: widget.battery,
+      camera: widget.camera,
+      usedFor: widget.usedFor,
+      negotiable: selectedNegotiable!,
+      price: double.parse(_priceCtrl.text.trim()),
+      seller: '',
+    );
+
+    await ref
+        .read(phoneViewModelProvider.notifier)
+        .createPhone(phone, photoPath: widget.photoPath);
   }
 
   @override
   Widget build(BuildContext context) {
+    final phoneState = ref.watch(phoneViewModelProvider);
+
+    ref.listen<PhoneState>(phoneViewModelProvider, (previous, next) {
+      if (previous?.status != next.status) {
+        if (next.status == PhoneStatus.error) {
+          SnackbarUtils.showError(
+            context,
+            next.errorMessage ?? 'Something went wrong',
+          );
+        } else if (next.status == PhoneStatus.created) {
+          SnackbarUtils.showSuccess(context, 'Phone ad posted successfully!');
+          // pop all post form screens back to navigation screen
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -233,7 +279,9 @@ class _PostFormScreenThreeState extends State<PostFormScreenThree> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: _handlePostAd,
+                  onPressed: phoneState.status == PhoneStatus.loading
+                      ? null
+                      : _handlePostAd,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1565D8),
                     shape: RoundedRectangleBorder(
@@ -241,14 +289,16 @@ class _PostFormScreenThreeState extends State<PostFormScreenThree> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Post Ad',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: phoneState.status == PhoneStatus.loading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Post Ad',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
 

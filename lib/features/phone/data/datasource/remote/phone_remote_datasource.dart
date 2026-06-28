@@ -5,6 +5,7 @@ import 'package:client/features/phone/data/datasource/phone_datasource.dart';
 import 'package:client/features/phone/data/model/phone_api_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:convert';
 
 final phoneRemoteDataSourceProvider = Provider<IPhoneRemoteDataSource>((ref) {
   return PhoneRemoteDataSource(
@@ -34,7 +35,7 @@ class PhoneRemoteDataSource implements IPhoneRemoteDataSource {
       'title': phone.title,
       'brand': phone.brand,
       'condition': phone.condition,
-      'location': phone.location.toJson().toString(),
+      'location': jsonEncode(phone.location.toJson()),
       'description': phone.description,
       'cpu': phone.cpu,
       'storage': phone.storage,

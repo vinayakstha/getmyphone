@@ -1,27 +1,24 @@
 import 'package:client/app/routes/app_routes.dart';
+import 'package:client/features/home/presentation/state/category_state.dart';
+import 'package:client/features/home/presentation/view_model/catetory_view_model.dart';
+import 'package:client/features/phone/presentation/pages/map_picker_screen.dart';
 import 'package:client/features/phone/presentation/pages/post_form_screen_three.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:geocoding/geocoding.dart';
 
-class PostFormScreenTwo extends StatefulWidget {
+class PostFormScreenTwo extends ConsumerStatefulWidget {
   final String title;
   final String? photoPath;
 
   const PostFormScreenTwo({super.key, required this.title, this.photoPath});
 
   @override
-  State<PostFormScreenTwo> createState() => _PostFormScreenTwoState();
+  ConsumerState<PostFormScreenTwo> createState() => _PostFormScreenTwoState();
 }
 
-class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
-  final List<String> brands = [
-    'Apple',
-    'Samsung',
-    'Xiaomi',
-    'OnePlus',
-    'Google',
-    'Nothing',
-  ];
-
+class _PostFormScreenTwoState extends ConsumerState<PostFormScreenTwo> {
   final List<Map<String, String>> conditions = [
     {'label': 'Brand New', 'value': 'new'},
     {'label': 'Like New', 'value': 'like_new'},
@@ -30,8 +27,9 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
     {'label': 'Poor', 'value': 'poor'},
   ];
 
-  String? selectedBrand;
+  String? selectedBrandId;
   String? selectedCondition;
+  LatLng? _selectedLocation;
 
   final _descriptionCtrl = TextEditingController();
   final _cpuCtrl = TextEditingController();
@@ -41,6 +39,14 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
   final _batteryCtrl = TextEditingController();
   final _cameraCtrl = TextEditingController();
   final _usedForCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(
+      () => ref.read(categoryViewModelProvider.notifier).getAllCategories(),
+    );
+  }
 
   @override
   void dispose() {
@@ -53,6 +59,49 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
     _cameraCtrl.dispose();
     _usedForCtrl.dispose();
     super.dispose();
+  }
+
+  // Future<void> _openMapPicker() async {
+  //   final result = await Navigator.push<LatLng>(
+  //     context,
+  //     MaterialPageRoute(builder: (_) => const MapPickerScreen()),
+  //   );
+  //   if (result != null) {
+  //     setState(() => _selectedLocation = result);
+  //   }
+  // }
+
+  String _locationLabel = '';
+
+  Future<void> _openMapPicker() async {
+    final result = await Navigator.push<LatLng>(
+      context,
+      MaterialPageRoute(builder: (_) => const MapPickerScreen()),
+    );
+    if (result != null) {
+      setState(() => _selectedLocation = result);
+      // reverse geocode
+      try {
+        final placemarks = await placemarkFromCoordinates(
+          result.latitude,
+          result.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          setState(() {
+            _locationLabel =
+                '${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}'
+                    .replaceAll(RegExp(r'^,\s*|,\s*$'), '')
+                    .trim();
+          });
+        }
+      } catch (e) {
+        setState(
+          () => _locationLabel =
+              '${result.latitude.toStringAsFixed(4)}, ${result.longitude.toStringAsFixed(4)}',
+        );
+      }
+    }
   }
 
   Widget _buildTextField(
@@ -100,7 +149,7 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: DropdownButtonFormField<String>(
-        value: value,
+        initialValue: value,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
@@ -132,8 +181,9 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
   }
 
   void _handleNext() {
-    if (selectedBrand == null ||
+    if (selectedBrandId == null ||
         selectedCondition == null ||
+        _selectedLocation == null ||
         _descriptionCtrl.text.isEmpty ||
         _cpuCtrl.text.isEmpty ||
         _storageCtrl.text.isEmpty ||
@@ -144,7 +194,7 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
         _usedForCtrl.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please fill in all fields'),
+          content: Text('Please fill in all fields and select a location'),
           backgroundColor: Colors.red,
         ),
       );
@@ -156,8 +206,10 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
       PostFormScreenThree(
         title: widget.title,
         photoPath: widget.photoPath,
-        brand: selectedBrand!,
+        brand: selectedBrandId!,
         condition: selectedCondition!,
+        latitude: _selectedLocation!.latitude,
+        longitude: _selectedLocation!.longitude,
         description: _descriptionCtrl.text.trim(),
         cpu: _cpuCtrl.text.trim(),
         storage: _storageCtrl.text.trim(),
@@ -172,6 +224,8 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
 
   @override
   Widget build(BuildContext context) {
+    final categoryState = ref.watch(categoryViewModelProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -247,14 +301,29 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
 
               const SizedBox(height: 28),
 
-              _buildDropdown(
-                'Select Brand *',
-                brands
-                    .map((e) => {'label': e, 'value': e.toLowerCase()})
-                    .toList(),
-                selectedBrand,
-                (value) => setState(() => selectedBrand = value),
-              ),
+              // Brand Dropdown from API
+              categoryState.status == CategoryStatus.loading
+                  ? const Padding(
+                      padding: EdgeInsets.only(bottom: 14),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF1565D8),
+                        ),
+                      ),
+                    )
+                  : _buildDropdown(
+                      'Select Brand *',
+                      categoryState.categories
+                          .map(
+                            (e) => {
+                              'label': e.name,
+                              'value': e.categoryId ?? '',
+                            },
+                          )
+                          .toList(),
+                      selectedBrandId,
+                      (value) => setState(() => selectedBrandId = value),
+                    ),
 
               _buildDropdown(
                 'Condition *',
@@ -263,31 +332,55 @@ class _PostFormScreenTwoState extends State<PostFormScreenTwo> {
                 (value) => setState(() => selectedCondition = value),
               ),
 
-              // Map Placeholder
-              Container(
-                height: 110,
-                width: double.infinity,
-                margin: const EdgeInsets.only(bottom: 14),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey.shade200,
-                  border: Border.all(color: Colors.grey.shade400),
-                ),
-                child: const Center(
+              // Map Picker
+              GestureDetector(
+                onTap: _openMapPicker,
+                child: Container(
+                  height: 56,
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
+                    border: Border.all(
+                      color: _selectedLocation != null
+                          ? const Color(0xFF1565D8)
+                          : Colors.grey.shade400,
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.location_on_outlined,
-                        color: Color(0xFF6B7280),
+                        _selectedLocation != null
+                            ? Icons.location_on
+                            : Icons.location_on_outlined,
+                        color: _selectedLocation != null
+                            ? const Color(0xFF1565D8)
+                            : const Color(0xFF7A7A7A),
+                        size: 20,
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Tap to select location',
-                        style: TextStyle(
-                          color: Color(0xFF6B7280),
-                          fontSize: 15,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          _selectedLocation != null
+                              ? _locationLabel.isNotEmpty
+                                    ? _locationLabel
+                                    : 'Location selected'
+                              : 'Tap to select location',
+                          style: TextStyle(
+                            color: _selectedLocation != null
+                                ? const Color(0xFF1565D8)
+                                : const Color(0xFF7A7A7A),
+                            fontSize: 15,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: Color(0xFF7A7A7A),
                       ),
                     ],
                   ),
