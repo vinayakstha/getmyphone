@@ -122,7 +122,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: 12),
 
               // CATEGORY GRID
-              SizedBox(height: 250, child: _buildCategoryGrid(categoryState)),
+              _buildCategoryGrid(categoryState),
 
               const SizedBox(height: 20),
 
@@ -165,25 +165,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildCategoryGrid(CategoryState categoryState) {
     if (categoryState.status == CategoryStatus.loading) {
-      return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF0464D4)),
+      return const SizedBox(
+        height: 150,
+        child: Center(
+          child: CircularProgressIndicator(color: Color(0xFF0464D4)),
+        ),
       );
     }
 
     if (categoryState.status == CategoryStatus.error) {
-      return Center(
-        child: Text(
-          categoryState.errorMessage ?? 'Failed to load categories',
-          style: const TextStyle(color: Colors.red),
+      return SizedBox(
+        height: 100,
+        child: Center(
+          child: Text(
+            categoryState.errorMessage ?? 'Failed to load categories',
+            style: const TextStyle(color: Colors.red),
+          ),
         ),
       );
     }
 
     if (categoryState.categories.isEmpty) {
-      return const Center(child: Text('No categories found'));
+      return const SizedBox(
+        height: 100,
+        child: Center(child: Text('No categories found')),
+      );
     }
 
     return GridView.builder(
+      shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: categoryState.categories.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
