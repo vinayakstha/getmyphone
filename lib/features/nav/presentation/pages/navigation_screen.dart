@@ -26,13 +26,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
+        currentIndex: _selectedIndex >= 2 ? _selectedIndex + 1 : _selectedIndex,
         onTap: (index) {
           if (index == 2) {
             AppRoutes.push(context, const PostFormScreenOne());
             return;
           }
-          setState(() => _selectedIndex = index);
+          final screenIndex = index > 2 ? index - 1 : index;
+          setState(() => _selectedIndex = screenIndex);
         },
         selectedItemColor: const Color(0xFF1565D8),
         unselectedItemColor: Color.fromARGB(255, 118, 116, 116),
