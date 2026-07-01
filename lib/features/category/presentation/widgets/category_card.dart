@@ -1,3 +1,5 @@
+import 'package:client/app/routes/app_routes.dart';
+import 'package:client/features/category/presentation/pages/category_phones_screen.dart';
 import 'package:flutter/material.dart';
 
 class CategoryCard extends StatelessWidget {
@@ -16,7 +18,10 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to Brand with categoryId
+        AppRoutes.push(
+          context,
+          CategoryPhonesScreen(categoryId: categoryId, categoryName: category),
+        );
       },
       child: Card(
         child: Column(
