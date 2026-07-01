@@ -1,6 +1,6 @@
 import 'package:client/app/routes/app_routes.dart';
-import 'package:client/features/home/presentation/state/category_state.dart';
-import 'package:client/features/home/presentation/view_model/catetory_view_model.dart';
+import 'package:client/features/category/presentation/state/category_state.dart';
+import 'package:client/features/category/presentation/view_model/catetory_view_model.dart';
 import 'package:client/features/phone/presentation/pages/map_picker_screen.dart';
 import 'package:client/features/phone/presentation/pages/post_form_screen_three.dart';
 import 'package:flutter/material.dart';

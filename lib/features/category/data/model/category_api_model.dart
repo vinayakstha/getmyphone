@@ -1,4 +1,4 @@
-import 'package:client/features/home/domain/entities/category_entity.dart';
+import 'package:client/features/category/domain/entities/category_entity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'category_api_model.g.dart';

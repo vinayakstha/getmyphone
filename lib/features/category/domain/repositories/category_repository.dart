@@ -1,4 +1,4 @@
-import 'package:client/features/home/domain/entities/category_entity.dart';
+import 'package:client/features/category/domain/entities/category_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:client/core/error/failures.dart';
 

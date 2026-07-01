@@ -1,8 +1,8 @@
 import 'package:client/core/api/api_endpoints.dart';
-import 'package:client/features/home/presentation/state/category_state.dart';
-import 'package:client/features/home/presentation/view_model/catetory_view_model.dart';
-import 'package:client/features/home/presentation/widgets/banner_card.dart';
-import 'package:client/features/home/presentation/widgets/category_card.dart';
+import 'package:client/features/category/presentation/state/category_state.dart';
+import 'package:client/features/category/presentation/view_model/catetory_view_model.dart';
+import 'package:client/features/category/presentation/widgets/banner_card.dart';
+import 'package:client/features/category/presentation/widgets/category_card.dart';
 import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
 import 'package:client/features/phone/presentation/widgets/phone_card.dart';

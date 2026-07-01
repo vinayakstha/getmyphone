@@ -1,4 +1,4 @@
-import 'package:client/features/home/domain/entities/category_entity.dart';
+import 'package:client/features/category/domain/entities/category_entity.dart';
 import 'package:equatable/equatable.dart';
 
 enum CategoryStatus { initial, loading, loaded, error }

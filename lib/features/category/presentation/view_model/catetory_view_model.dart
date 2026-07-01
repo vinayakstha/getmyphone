@@ -1,6 +1,6 @@
-import 'package:client/features/home/domain/usecases/get_all_categories_usecase.dart';
-import 'package:client/features/home/domain/usecases/get_category_by_id_usecase.dart';
-import 'package:client/features/home/presentation/state/category_state.dart';
+import 'package:client/features/category/domain/usecases/get_all_categories_usecase.dart';
+import 'package:client/features/category/domain/usecases/get_category_by_id_usecase.dart';
+import 'package:client/features/category/presentation/state/category_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final categoryViewModelProvider =

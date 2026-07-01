@@ -1,4 +1,4 @@
-import 'package:client/features/home/data/model/category_api_model.dart';
+import 'package:client/features/category/data/model/category_api_model.dart';
 
 abstract interface class ICategoryRemoteDataSource {
   Future<List<CategoryApiModel>> getAllCategories();

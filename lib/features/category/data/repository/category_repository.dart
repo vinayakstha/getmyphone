@@ -1,9 +1,9 @@
 import 'package:client/core/error/failures.dart';
-import 'package:client/features/home/data/datasource/category_datasource.dart';
-import 'package:client/features/home/data/datasource/remote/category_remote_datasource.dart';
-import 'package:client/features/home/data/model/category_api_model.dart';
-import 'package:client/features/home/domain/entities/category_entity.dart';
-import 'package:client/features/home/domain/repositories/category_repository.dart';
+import 'package:client/features/category/data/datasource/category_datasource.dart';
+import 'package:client/features/category/data/datasource/remote/category_remote_datasource.dart';
+import 'package:client/features/category/data/model/category_api_model.dart';
+import 'package:client/features/category/domain/entities/category_entity.dart';
+import 'package:client/features/category/domain/repositories/category_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
