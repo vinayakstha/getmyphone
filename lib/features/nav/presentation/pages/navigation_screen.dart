@@ -1,6 +1,7 @@
 import 'package:client/app/routes/app_routes.dart';
 import 'package:client/features/home/presentation/pages/home_screen.dart';
 import 'package:client/features/phone/presentation/pages/post_form_screen_one.dart';
+import 'package:client/features/saved/presentation/pages/saved_screen.dart';
 import 'package:flutter/material.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const Scaffold(body: Center(child: Text('Chat'))),
-    const Scaffold(body: Center(child: Text('Saved'))),
+    const SavedScreen(),
     const Scaffold(body: Center(child: Text('Profile'))),
   ];
 

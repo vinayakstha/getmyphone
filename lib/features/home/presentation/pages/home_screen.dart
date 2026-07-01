@@ -6,6 +6,7 @@ import 'package:client/features/category/presentation/widgets/category_card.dart
 import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
 import 'package:client/features/phone/presentation/widgets/phone_card.dart';
+import 'package:client/features/saved/presentation/view_model/saved_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -253,11 +254,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: phone.title,
           specs: '${phone.ram} RAM • ${phone.storage}',
           price: 'NPR ${phone.price.toStringAsFixed(0)}',
-          onTap: () {
-            // TODO: navigate to phone detail screen
-          },
+          onTap: () {},
           onBookmark: () {
-            // TODO: bookmark logic
+            ref
+                .read(savedViewModelProvider.notifier)
+                .toggleSave(phone.phoneId ?? '');
           },
         );
       },
