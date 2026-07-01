@@ -99,12 +99,12 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
             title: saved.phone.title,
             specs: '${saved.phone.ram} RAM • ${saved.phone.storage}',
             price: 'NPR ${saved.phone.price.toStringAsFixed(0)}',
+            isBookmarked: true, // always true in saved screen
             onTap: () {},
             onBookmark: () async {
               await ref
                   .read(savedViewModelProvider.notifier)
                   .toggleSave(saved.phone.phoneId ?? '');
-              // refresh the list after toggle
               ref.read(savedViewModelProvider.notifier).getSavedByUser();
             },
           );

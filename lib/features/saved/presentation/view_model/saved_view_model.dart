@@ -31,10 +31,20 @@ class SavedViewModel extends Notifier<SavedState> {
         status: SavedStatus.error,
         errorMessage: failure.message,
       ),
-      (data) => state = state.copyWith(
-        status: SavedStatus.toggled,
-        isSaved: data['saved'] as bool,
-      ),
+      (data) {
+        final isSaved = data['saved'] as bool;
+        final updatedIds = Set<String>.from(state.savedPhoneIds);
+        if (isSaved) {
+          updatedIds.add(phoneId);
+        } else {
+          updatedIds.remove(phoneId);
+        }
+        state = state.copyWith(
+          status: SavedStatus.toggled,
+          isSaved: isSaved,
+          savedPhoneIds: updatedIds,
+        );
+      },
     );
   }
 
@@ -51,6 +61,7 @@ class SavedViewModel extends Notifier<SavedState> {
       (savedListings) => state = state.copyWith(
         status: SavedStatus.loaded,
         savedListings: savedListings,
+        savedPhoneIds: savedListings.map((e) => e.phone.phoneId ?? '').toSet(),
       ),
     );
   }

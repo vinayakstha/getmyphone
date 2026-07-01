@@ -24,6 +24,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Future.microtask(() {
       ref.read(categoryViewModelProvider.notifier).getAllCategories();
       ref.read(phoneViewModelProvider.notifier).getAllPhones();
+      ref.read(savedViewModelProvider.notifier).getSavedByUser(); // add this
     });
   }
 
@@ -246,6 +247,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       itemBuilder: (context, index) {
         final phone = phoneState.phones[index];
+        final savedState = ref.watch(savedViewModelProvider); // add this watch
+
+        // in phone grid itemBuilder:
         return PhoneCard(
           image: phone.photo != null
               ? ApiEndpoints.imageBaseUrl + phone.photo!
@@ -254,9 +258,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: phone.title,
           specs: '${phone.ram} RAM • ${phone.storage}',
           price: 'NPR ${phone.price.toStringAsFixed(0)}',
+          isBookmarked: savedState.savedPhoneIds.contains(
+            phone.phoneId,
+          ), // add this
           onTap: () {},
-          onBookmark: () {
-            ref
+          onBookmark: () async {
+            await ref
                 .read(savedViewModelProvider.notifier)
                 .toggleSave(phone.phoneId ?? '');
           },
