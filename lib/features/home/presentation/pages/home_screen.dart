@@ -6,6 +6,7 @@ import 'package:client/features/category/presentation/widgets/category_card.dart
 import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
 import 'package:client/features/phone/presentation/widgets/phone_card.dart';
+import 'package:client/features/saved/presentation/view_model/saved_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,6 +24,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Future.microtask(() {
       ref.read(categoryViewModelProvider.notifier).getAllCategories();
       ref.read(phoneViewModelProvider.notifier).getAllPhones();
+      ref.read(savedViewModelProvider.notifier).getSavedByUser(); // add this
     });
   }
 
@@ -245,6 +247,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       itemBuilder: (context, index) {
         final phone = phoneState.phones[index];
+        final savedState = ref.watch(savedViewModelProvider); // add this watch
+
+        // in phone grid itemBuilder:
         return PhoneCard(
           image: phone.photo != null
               ? ApiEndpoints.imageBaseUrl + phone.photo!
@@ -253,11 +258,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: phone.title,
           specs: '${phone.ram} RAM • ${phone.storage}',
           price: 'NPR ${phone.price.toStringAsFixed(0)}',
-          onTap: () {
-            // TODO: navigate to phone detail screen
-          },
-          onBookmark: () {
-            // TODO: bookmark logic
+          isBookmarked: savedState.savedPhoneIds.contains(
+            phone.phoneId,
+          ), // add this
+          onTap: () {},
+          onBookmark: () async {
+            await ref
+                .read(savedViewModelProvider.notifier)
+                .toggleSave(phone.phoneId ?? '');
           },
         );
       },

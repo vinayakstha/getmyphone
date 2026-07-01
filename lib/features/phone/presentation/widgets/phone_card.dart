@@ -8,6 +8,7 @@ class PhoneCard extends StatelessWidget {
   final String price;
   final VoidCallback? onTap;
   final VoidCallback? onBookmark;
+  final bool isBookmarked;
 
   const PhoneCard({
     super.key,
@@ -18,6 +19,7 @@ class PhoneCard extends StatelessWidget {
     required this.price,
     this.onTap,
     this.onBookmark,
+    this.isBookmarked = false,
   });
 
   @override
@@ -26,58 +28,49 @@ class PhoneCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       onTap: onTap,
       child: Container(
+        width: 180,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          // color: Colors.white,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: const Color(0xffD6DCE5)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
-            /// Image + Bookmark
+            // Image + Bookmark
             Stack(
               children: [
                 Center(
                   child: SizedBox(
-                    height: 110,
-                    width: double.infinity,
-                    child: image.isNotEmpty
+                    height: 120,
+                    child: image.startsWith('http')
                         ? Image.network(
                             image,
                             fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                                  Icons.phone_android,
-                                  size: 60,
-                                  color: Color(0xffD6DCE5),
-                                ),
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return const Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              );
-                            },
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.phone_android,
+                              size: 60,
+                              color: Colors.grey,
+                            ),
                           )
                         : const Icon(
                             Icons.phone_android,
                             size: 60,
-                            color: Color(0xffD6DCE5),
+                            color: Colors.grey,
                           ),
                   ),
                 ),
-
                 Positioned(
                   top: 0,
                   right: 0,
                   child: InkWell(
                     onTap: onBookmark,
-                    child: const Icon(
-                      Icons.bookmark_border,
-                      color: Color(0xff444B59),
+                    child: Icon(
+                      isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                      color: isBookmarked
+                          ? const Color(0xFF1565D8)
+                          : const Color(0xff444B59),
                       size: 24,
                     ),
                   ),
@@ -85,9 +78,9 @@ class PhoneCard extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
 
-            /// Condition
+            // Condition
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
@@ -104,15 +97,15 @@ class PhoneCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
 
-            /// Title
+            // Title
             Text(
               title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 15,
+                fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: Color(0xff2C2C2C),
               ),
@@ -120,21 +113,19 @@ class PhoneCard extends StatelessWidget {
 
             const SizedBox(height: 4),
 
-            /// Specs
+            // Specs
             Text(
               specs,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12, color: Color(0xff707070)),
+              style: const TextStyle(fontSize: 13, color: Color(0xff707070)),
             ),
 
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
 
-            /// Price
+            // Price
             Text(
               price,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 color: Color(0xFF1565D8),
                 fontWeight: FontWeight.bold,
               ),
