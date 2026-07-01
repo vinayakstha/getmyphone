@@ -1,6 +1,6 @@
 import 'package:client/core/api/api_endpoints.dart';
-import 'package:client/features/phone/presentation/state/phone_state.dart';
-import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
+import 'package:client/features/category/presentation/state/category_phone_state.dart';
+import 'package:client/features/category/presentation/view_model/category_phone_view_model.dart';
 import 'package:client/features/phone/presentation/widgets/phone_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,14 +26,14 @@ class _CategoryPhonesScreenState extends ConsumerState<CategoryPhonesScreen> {
     super.initState();
     Future.microtask(
       () => ref
-          .read(phoneViewModelProvider.notifier)
+          .read(categoryPhoneViewModelProvider.notifier)
           .getPhonesByBrand(widget.categoryId),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final phoneState = ref.watch(phoneViewModelProvider);
+    final phoneState = ref.watch(categoryPhoneViewModelProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -53,14 +53,14 @@ class _CategoryPhonesScreenState extends ConsumerState<CategoryPhonesScreen> {
     );
   }
 
-  Widget _buildBody(PhoneState phoneState) {
-    if (phoneState.status == PhoneStatus.loading) {
+  Widget _buildBody(CategoryPhoneState phoneState) {
+    if (phoneState.status == CategoryPhoneStatus.loading) {
       return const Center(
         child: CircularProgressIndicator(color: Color(0xFF0464D4)),
       );
     }
 
-    if (phoneState.status == PhoneStatus.error) {
+    if (phoneState.status == CategoryPhoneStatus.error) {
       return Center(
         child: Text(
           phoneState.errorMessage ?? 'Failed to load listings',
