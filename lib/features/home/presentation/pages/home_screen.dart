@@ -1,8 +1,10 @@
+import 'package:client/app/routes/app_routes.dart';
 import 'package:client/core/api/api_endpoints.dart';
 import 'package:client/features/category/presentation/state/category_state.dart';
 import 'package:client/features/category/presentation/view_model/catetory_view_model.dart';
 import 'package:client/features/home/presentation/widgets/banner_card.dart';
 import 'package:client/features/category/presentation/widgets/category_card.dart';
+import 'package:client/features/phone/presentation/pages/phone_details_screen.dart';
 import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
 import 'package:client/features/phone/presentation/widgets/phone_card.dart';
@@ -261,7 +263,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           isBookmarked: savedState.savedPhoneIds.contains(
             phone.phoneId,
           ), // add this
-          onTap: () {},
+          onTap: () {
+            AppRoutes.push(
+              context,
+              PhoneDetailsScreen(phone: phone), // or saved.phone
+            );
+          },
           onBookmark: () async {
             await ref
                 .read(savedViewModelProvider.notifier)
