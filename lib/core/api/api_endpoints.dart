@@ -47,6 +47,11 @@ class ApiEndpoints {
   static const String updatePhone = '/phone';
   static const String deletePhone = '/phone';
 
+  // ============ Saved Endpoints ==========
+  static const String toggleSave = '/saved';
+  static const String getSaved = '/saved';
+  static const String isSaved = '/saved';
+
   static String getImageUrl(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
       return '';
