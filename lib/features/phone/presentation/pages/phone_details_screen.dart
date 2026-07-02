@@ -3,7 +3,9 @@ import 'package:client/features/phone/domain/entities/phone_entity.dart';
 import 'package:client/features/phone/presentation/widgets/seller_profile_widget.dart';
 import 'package:client/features/saved/presentation/view_model/saved_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 
 class PhoneDetailsScreen extends ConsumerWidget {
   final PhoneEntity phone;
@@ -14,6 +16,13 @@ class PhoneDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final savedState = ref.watch(savedViewModelProvider);
     final isBookmarked = savedState.savedPhoneIds.contains(phone.phoneId);
+
+    final lat = phone.location.coordinates.length >= 2
+        ? phone.location.coordinates[1]
+        : 27.7172;
+    final lng = phone.location.coordinates.isNotEmpty
+        ? phone.location.coordinates[0]
+        : 85.3240;
 
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
@@ -183,18 +192,93 @@ class PhoneDetailsScreen extends ConsumerWidget {
                       labelColor: Color(0xFF1565D8),
                       unselectedLabelColor: Colors.grey,
                       tabs: [
-                        Tab(text: "Description"),
-                        Tab(text: "Specs"),
+                        Tab(text: "Details"),
+                        Tab(text: "Location"),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    SizedBox(
+                      height: 420,
+                      child: TabBarView(
                         children: [
-                          Text(phone.description),
-                          const SizedBox(height: 12),
-                          Bullet(text: 'Used for: ${phone.usedFor}'),
+                          // Details Tab
+                          SingleChildScrollView(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(phone.description),
+                                const SizedBox(height: 12),
+                                Bullet(text: 'Used for: ${phone.usedFor}'),
+                                const SizedBox(height: 20),
+                                const Text(
+                                  "Specifications",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                GridView.count(
+                                  crossAxisCount: 2,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  childAspectRatio: 2.8,
+                                  children: [
+                                    SpecItem(title: "CPU", value: phone.cpu),
+                                    SpecItem(
+                                      title: "Battery",
+                                      value: phone.battery,
+                                    ),
+                                    SpecItem(title: "RAM", value: phone.ram),
+                                    SpecItem(
+                                      title: "Screen",
+                                      value: phone.screen,
+                                    ),
+                                    SpecItem(
+                                      title: "Camera",
+                                      value: phone.camera,
+                                    ),
+                                    SpecItem(
+                                      title: "Storage",
+                                      value: phone.storage,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Location Tab
+                          FlutterMap(
+                            options: MapOptions(
+                              initialCenter: LatLng(lat, lng),
+                              initialZoom: 15,
+                              interactionOptions: const InteractionOptions(
+                                flags: InteractiveFlag.none,
+                              ),
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                userAgentPackageName: 'com.example.client',
+                              ),
+                              MarkerLayer(
+                                markers: [
+                                  Marker(
+                                    point: LatLng(lat, lng),
+                                    width: 50,
+                                    height: 50,
+                                    child: const Icon(
+                                      Icons.location_on,
+                                      color: Color(0xFF1565D8),
+                                      size: 46,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -205,37 +289,7 @@ class PhoneDetailsScreen extends ConsumerWidget {
 
             const SizedBox(height: 12),
 
-            // Specifications
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Specifications",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  const SizedBox(height: 16),
-                  GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: 2.8,
-                    children: [
-                      SpecItem(title: "CPU", value: phone.cpu),
-                      SpecItem(title: "Battery", value: phone.battery),
-                      SpecItem(title: "RAM", value: phone.ram),
-                      SpecItem(title: "Screen", value: phone.screen),
-                      SpecItem(title: "Camera", value: phone.camera),
-                      SpecItem(title: "Storage", value: phone.storage),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
           ],
         ),
       ),
@@ -245,7 +299,6 @@ class PhoneDetailsScreen extends ConsumerWidget {
 
 class Bullet extends StatelessWidget {
   final String text;
-
   const Bullet({super.key, required this.text});
 
   @override
@@ -266,7 +319,6 @@ class Bullet extends StatelessWidget {
 class SpecItem extends StatelessWidget {
   final String title;
   final String value;
-
   const SpecItem({super.key, required this.title, required this.value});
 
   @override
