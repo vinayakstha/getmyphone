@@ -204,7 +204,6 @@ class PhoneDetailsScreen extends ConsumerWidget {
                       child: TabBarView(
                         children: [
                           // Details Tab
-                          // Details Tab
                           SingleChildScrollView(
                             padding: const EdgeInsets.all(16),
                             child: Column(
