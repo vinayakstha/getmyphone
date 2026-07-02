@@ -159,7 +159,7 @@ class PhoneDetailsScreen extends ConsumerWidget {
                         label: Text(
                           phone.negotiable == 'yes'
                               ? 'Negotiable'
-                              : 'Fixed Price',
+                              : 'Non Negotiable',
                         ),
                         backgroundColor: Colors.grey.shade200,
                       ),
@@ -201,11 +201,20 @@ class PhoneDetailsScreen extends ConsumerWidget {
                       child: TabBarView(
                         children: [
                           // Details Tab
+                          // Details Tab
                           SingleChildScrollView(
                             padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                const Text(
+                                  "Description",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
                                 Text(phone.description),
                                 const SizedBox(height: 12),
                                 Bullet(text: 'Used for: ${phone.usedFor}'),
@@ -217,6 +226,7 @@ class PhoneDetailsScreen extends ConsumerWidget {
                                     fontSize: 18,
                                   ),
                                 ),
+                                // ... rest stays the same
                                 const SizedBox(height: 16),
                                 GridView.count(
                                   crossAxisCount: 2,
