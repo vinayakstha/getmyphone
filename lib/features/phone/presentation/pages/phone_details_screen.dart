@@ -1,4 +1,5 @@
 import 'package:client/core/api/api_endpoints.dart';
+import 'package:client/core/services/storage/user_session_service.dart';
 import 'package:client/features/phone/domain/entities/phone_entity.dart';
 import 'package:client/features/phone/presentation/widgets/seller_profile_widget.dart';
 import 'package:client/features/saved/presentation/view_model/saved_view_model.dart';
@@ -24,6 +25,155 @@ class PhoneDetailsScreen extends ConsumerWidget {
     final lng = phone.location.coordinates.isNotEmpty
         ? phone.location.coordinates[0]
         : 85.3240;
+
+    void _showSellerBottomSheet(BuildContext context, WidgetRef ref) {
+      // get current user id from session
+      final sessionService = ref.read(userSessionServiceProvider);
+      final currentUserId = sessionService.getUserId();
+      final isSelf = currentUserId == phone.sellerId;
+
+      double _selectedRating = 0;
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (_) => StatefulBuilder(
+          builder: (context, setState) => Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Profile Picture
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: Colors.grey.shade200,
+                  backgroundImage: phone.sellerProfilePicture != null
+                      ? NetworkImage(
+                          ApiEndpoints.imageBaseUrl +
+                              phone.sellerProfilePicture!,
+                        )
+                      : null,
+                  child: phone.sellerProfilePicture == null
+                      ? const Icon(Icons.person, size: 40, color: Colors.grey)
+                      : null,
+                ),
+
+                const SizedBox(height: 12),
+
+                // Seller Name
+                Text(
+                  phone.sellerName,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                // Current Rating
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.star, size: 16, color: Colors.amber),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${phone.sellerRatingAverage.toStringAsFixed(1)} (${phone.sellerRatingCount} reviews)',
+                      style: const TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                if (isSelf) ...[
+                  const Text(
+                    'You cannot rate yourself',
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                ] else ...[
+                  const Text(
+                    'Rate this seller',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // 5 Star Rating
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(5, (index) {
+                      return GestureDetector(
+                        onTap: () =>
+                            setState(() => _selectedRating = index + 1.0),
+                        child: Icon(
+                          index < _selectedRating
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: Colors.amber,
+                          size: 40,
+                        ),
+                      );
+                    }),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _selectedRating == 0
+                          ? null
+                          : () async {
+                              // TODO: call rating view model
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Rating submitted!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1565D8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Submit Rating',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
@@ -184,7 +334,7 @@ class PhoneDetailsScreen extends ConsumerWidget {
               profilePicture: phone.sellerProfilePicture != null
                   ? ApiEndpoints.imageBaseUrl + phone.sellerProfilePicture!
                   : null,
-              onTap: () {},
+              onTap: () => _showSellerBottomSheet(context, ref),
             ),
 
             const SizedBox(height: 12),
