@@ -173,9 +173,12 @@ class PhoneDetailsScreen extends ConsumerWidget {
 
             // Seller Profile
             SellerProfileWidget(
-              name: phone.seller,
-              ratingAverage: 0,
-              ratingCount: 0,
+              name: phone.sellerName,
+              ratingAverage: phone.sellerRatingAverage,
+              ratingCount: phone.sellerRatingCount,
+              profilePicture: phone.sellerProfilePicture != null
+                  ? ApiEndpoints.imageBaseUrl + phone.sellerProfilePicture!
+                  : null,
               onTap: () {},
             ),
 

@@ -14,7 +14,7 @@ class PhoneEntity extends Equatable {
   final String? phoneId;
   final String title;
   final String? photo;
-  final String brand; // category id
+  final String brand;
   final String condition;
   final LocationEntity location;
   final String description;
@@ -27,7 +27,11 @@ class PhoneEntity extends Equatable {
   final String usedFor;
   final String negotiable;
   final double price;
-  final String seller; // user id
+  final String sellerId;
+  final String sellerName;
+  final String? sellerProfilePicture;
+  final double sellerRatingAverage;
+  final int sellerRatingCount;
   final DateTime? createdAt;
 
   const PhoneEntity({
@@ -47,7 +51,11 @@ class PhoneEntity extends Equatable {
     required this.usedFor,
     required this.negotiable,
     required this.price,
-    required this.seller,
+    required this.sellerId,
+    required this.sellerName,
+    this.sellerProfilePicture,
+    this.sellerRatingAverage = 0,
+    this.sellerRatingCount = 0,
     this.createdAt,
   });
 
@@ -69,7 +77,11 @@ class PhoneEntity extends Equatable {
     usedFor,
     negotiable,
     price,
-    seller,
+    sellerId,
+    sellerName,
+    sellerProfilePicture,
+    sellerRatingAverage,
+    sellerRatingCount,
     createdAt,
   ];
 }

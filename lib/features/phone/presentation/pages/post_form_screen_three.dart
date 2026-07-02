@@ -158,7 +158,8 @@ class _PostFormScreenThreeState extends ConsumerState<PostFormScreenThree> {
       usedFor: widget.usedFor,
       negotiable: selectedNegotiable!,
       price: double.parse(_priceCtrl.text.trim()),
-      seller: '',
+      sellerId: '',
+      sellerName: '',
     );
 
     await ref

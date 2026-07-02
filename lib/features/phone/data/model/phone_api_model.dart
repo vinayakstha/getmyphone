@@ -73,11 +73,14 @@ class PhoneApiModel {
   Map<String, dynamic> toJson() => _$PhoneApiModelToJson(this);
 
   PhoneEntity toEntity() {
+    final sellerMap = seller is Map ? seller as Map<String, dynamic> : null;
+    final brandMap = brand is Map ? brand as Map<String, dynamic> : null;
+
     return PhoneEntity(
       phoneId: id,
       title: title,
       photo: photo,
-      brand: brand is Map ? brand['_id'] as String : brand as String,
+      brand: brandMap != null ? brandMap['_id'] as String : brand as String,
       condition: condition,
       location: location.toEntity(),
       description: description,
@@ -90,7 +93,17 @@ class PhoneApiModel {
       usedFor: usedFor,
       negotiable: negotiable,
       price: price,
-      seller: seller is Map ? seller['_id'] as String : seller as String,
+      sellerId: sellerMap != null
+          ? sellerMap['_id'] as String
+          : seller as String,
+      sellerName: sellerMap != null ? sellerMap['fullName'] as String : '',
+      sellerProfilePicture: sellerMap?['profilePicture'] as String?,
+      sellerRatingAverage: sellerMap != null
+          ? ((sellerMap['rating'] as Map?)?['average'] as num?)?.toDouble() ?? 0
+          : 0,
+      sellerRatingCount: sellerMap != null
+          ? ((sellerMap['rating'] as Map?)?['count'] as num?)?.toInt() ?? 0
+          : 0,
       createdAt: createdAt,
     );
   }
@@ -113,7 +126,7 @@ class PhoneApiModel {
       usedFor: entity.usedFor,
       negotiable: entity.negotiable,
       price: entity.price,
-      seller: entity.seller,
+      seller: entity.sellerId,
       createdAt: entity.createdAt,
     );
   }
