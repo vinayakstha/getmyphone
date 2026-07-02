@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PhoneDetailsScreen extends ConsumerWidget {
   final PhoneEntity phone;
@@ -126,7 +127,11 @@ class PhoneDetailsScreen extends ConsumerWidget {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Share.share(
+                            'https://getmyphone.com/listings/${phone.title}/${phone.phoneId}',
+                          );
+                        },
                         icon: const Icon(Icons.share_outlined),
                       ),
                       IconButton(
