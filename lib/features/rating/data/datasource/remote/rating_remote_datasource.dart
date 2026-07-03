@@ -29,12 +29,12 @@ class RatingRemoteDataSource implements IRatingRemoteDataSource {
     required double score,
   }) async {
     final token = _tokenService.getToken();
-    final response = await _apiClient.post(
+    await _apiClient.post(
       ApiEndpoints.submitRating,
       data: {'targetId': targetId, 'score': score},
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
-    return RatingApiModel.fromJson(response.data['data']);
+    return RatingApiModel(raterId: '', targetId: targetId, score: score);
   }
 
   @override

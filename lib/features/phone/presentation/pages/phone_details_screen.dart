@@ -1,7 +1,10 @@
 import 'package:client/core/api/api_endpoints.dart';
 import 'package:client/core/services/storage/user_session_service.dart';
+import 'package:client/core/utils/snackbar_utils.dart';
 import 'package:client/features/phone/domain/entities/phone_entity.dart';
 import 'package:client/features/phone/presentation/widgets/seller_profile_widget.dart';
+import 'package:client/features/rating/presentation/state/rating_state.dart';
+import 'package:client/features/rating/presentation/view_model/rating_view_model.dart';
 import 'package:client/features/saved/presentation/view_model/saved_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -140,14 +143,31 @@ class PhoneDetailsScreen extends ConsumerWidget {
                       onPressed: _selectedRating == 0
                           ? null
                           : () async {
-                              // TODO: call rating view model
                               Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Rating submitted!'),
-                                  backgroundColor: Colors.green,
-                                ),
+                              await ref
+                                  .read(ratingViewModelProvider.notifier)
+                                  .submitRating(
+                                    targetId: phone.sellerId,
+                                    score: _selectedRating,
+                                  );
+
+                              final ratingState = ref.read(
+                                ratingViewModelProvider,
                               );
+                              if (ratingState.status ==
+                                  RatingStatus.submitted) {
+                                SnackbarUtils.showSuccess(
+                                  context,
+                                  'Rating submitted successfully!',
+                                );
+                              } else if (ratingState.status ==
+                                  RatingStatus.error) {
+                                SnackbarUtils.showError(
+                                  context,
+                                  ratingState.errorMessage ??
+                                      'Failed to submit rating',
+                                );
+                              }
                             },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1565D8),

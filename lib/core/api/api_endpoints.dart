@@ -54,7 +54,7 @@ class ApiEndpoints {
 
   // ============ Rating Endpoints ==========
   static const String submitRating = '/rating';
-static const String getUserRatings = '/rating';
+  static const String getUserRatings = '/rating';
 
   static String getImageUrl(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
