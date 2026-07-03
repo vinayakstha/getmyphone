@@ -52,6 +52,10 @@ class ApiEndpoints {
   static const String getSaved = '/saved';
   static const String isSaved = '/saved';
 
+  // ============ Rating Endpoints ==========
+  static const String submitRating = '/rating';
+static const String getUserRatings = '/rating';
+
   static String getImageUrl(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
       return '';
