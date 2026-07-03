@@ -1,7 +1,10 @@
+import 'package:client/app/routes/app_routes.dart';
 import 'package:client/core/api/api_endpoints.dart';
 import 'package:client/features/category/presentation/state/category_phone_state.dart';
 import 'package:client/features/category/presentation/view_model/category_phone_view_model.dart';
+import 'package:client/features/phone/presentation/pages/phone_details_screen.dart';
 import 'package:client/features/phone/presentation/widgets/phone_card.dart';
+import 'package:client/features/saved/presentation/view_model/saved_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -78,6 +81,8 @@ class _CategoryPhonesScreenState extends ConsumerState<CategoryPhonesScreen> {
       );
     }
 
+    final savedState = ref.watch(savedViewModelProvider);
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: GridView.builder(
@@ -98,8 +103,18 @@ class _CategoryPhonesScreenState extends ConsumerState<CategoryPhonesScreen> {
             title: phone.title,
             specs: '${phone.ram} RAM • ${phone.storage}',
             price: 'NPR ${phone.price.toStringAsFixed(0)}',
-            onTap: () {},
-            onBookmark: () {},
+            isBookmarked: savedState.savedPhoneIds.contains(phone.phoneId),
+            onTap: () {
+              AppRoutes.push(
+                context,
+                PhoneDetailsScreen(phoneId: phone.phoneId ?? ''),
+              );
+            },
+            onBookmark: () async {
+              await ref
+                  .read(savedViewModelProvider.notifier)
+                  .toggleSave(phone.phoneId ?? '');
+            },
           );
         },
       ),
