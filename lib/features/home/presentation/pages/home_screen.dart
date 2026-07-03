@@ -266,7 +266,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           onTap: () {
             AppRoutes.push(
               context,
-              PhoneDetailsScreen(phone: phone), // or saved.phone
+              PhoneDetailsScreen(phoneId: phone.phoneId ?? ''),
             );
           },
           onBookmark: () async {
