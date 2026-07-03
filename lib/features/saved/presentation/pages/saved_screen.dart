@@ -1,4 +1,6 @@
+import 'package:client/app/routes/app_routes.dart';
 import 'package:client/core/api/api_endpoints.dart';
+import 'package:client/features/phone/presentation/pages/phone_details_screen.dart';
 import 'package:client/features/phone/presentation/widgets/phone_card.dart';
 import 'package:client/features/saved/presentation/state/saved_state.dart';
 import 'package:client/features/saved/presentation/view_model/saved_view_model.dart';
@@ -99,8 +101,13 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
             title: saved.phone.title,
             specs: '${saved.phone.ram} RAM • ${saved.phone.storage}',
             price: 'NPR ${saved.phone.price.toStringAsFixed(0)}',
-            isBookmarked: true, // always true in saved screen
-            onTap: () {},
+            isBookmarked: true,
+            onTap: () {
+              AppRoutes.push(
+                context,
+                PhoneDetailsScreen(phoneId: saved.phone.phoneId ?? ''),
+              );
+            },
             onBookmark: () async {
               await ref
                   .read(savedViewModelProvider.notifier)
