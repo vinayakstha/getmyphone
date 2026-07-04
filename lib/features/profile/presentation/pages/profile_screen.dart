@@ -4,6 +4,7 @@ import 'package:client/core/services/storage/user_session_service.dart';
 import 'package:client/features/auth/presentation/pages/login_screen.dart';
 import 'package:client/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:client/features/profile/presentation/pages/edit_profile_screen.dart';
+import 'package:client/features/profile/presentation/pages/my_post_screen.dart';
 import 'package:client/features/profile/presentation/widgets/profile_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -146,7 +147,8 @@ class ProfileScreen extends ConsumerWidget {
                       ProfileTile(
                         icon: Icons.work_outline,
                         title: "My Posts",
-                        onTap: () {},
+                        onTap: () =>
+                            AppRoutes.push(context, const MyPostsScreen()),
                       ),
                       ProfileTile(
                         icon: Icons.notifications_none,
