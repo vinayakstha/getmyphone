@@ -5,6 +5,7 @@ import 'package:client/features/phone/domain/usecases/get_all_phones.usecase.dar
 import 'package:client/features/phone/domain/usecases/get_phone_by_id_usecase.dart';
 import 'package:client/features/phone/domain/usecases/get_phones_by_brand_usecase.dart';
 import 'package:client/features/phone/domain/usecases/get_phones_by_seller_usecase.dart';
+import 'package:client/features/phone/domain/usecases/update_phone_usecase.dart';
 import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +20,8 @@ class PhoneViewModel extends Notifier<PhoneState> {
   late final GetPhonesBySellerUsecase _getPhonesBySellerUsecase;
   late final GetPhonesByBrandUsecase _getPhonesByBrandUsecase;
   late final DeletePhoneUsecase _deletePhoneUsecase;
+  UpdatePhoneUsecase get _updatePhoneUsecase =>
+      ref.read(updatePhoneUsecaseProvider);
 
   @override
   PhoneState build() {
@@ -127,6 +130,29 @@ class PhoneViewModel extends Notifier<PhoneState> {
       (_) => state = state.copyWith(
         status: PhoneStatus.deleted,
         phones: state.phones.where((p) => p.phoneId != id).toList(),
+      ),
+    );
+  }
+
+  Future<void> updatePhone(
+    String id,
+    PhoneEntity phone, {
+    String? photoPath,
+  }) async {
+    state = state.copyWith(status: PhoneStatus.loading);
+
+    final result = await _updatePhoneUsecase(
+      UpdatePhoneParams(id: id, phone: phone, photoPath: photoPath),
+    );
+
+    result.fold(
+      (failure) => state = state.copyWith(
+        status: PhoneStatus.error,
+        errorMessage: failure.message,
+      ),
+      (updatedPhone) => state = state.copyWith(
+        status: PhoneStatus.updated,
+        selectedPhone: updatedPhone,
       ),
     );
   }

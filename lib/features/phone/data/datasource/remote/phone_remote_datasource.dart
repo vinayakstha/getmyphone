@@ -122,7 +122,7 @@ class PhoneRemoteDataSource implements IPhoneRemoteDataSource {
       'title': phone.title,
       'brand': phone.brand,
       'condition': phone.condition,
-      'location': phone.location.toJson().toString(),
+      'location': jsonEncode(phone.location.toJson()),
       'description': phone.description,
       'cpu': phone.cpu,
       'storage': phone.storage,

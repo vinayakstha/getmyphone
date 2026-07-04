@@ -1,5 +1,6 @@
 import 'package:client/app/routes/app_routes.dart';
 import 'package:client/core/api/api_endpoints.dart';
+import 'package:client/features/phone/presentation/pages/edit_post_screen.dart';
 import 'package:client/features/phone/presentation/pages/phone_details_screen.dart';
 import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
@@ -53,7 +54,11 @@ class _MyPostsScreenState extends ConsumerState<MyPostsScreen> {
                 title: const Text('Edit Post'),
                 onTap: () {
                   Navigator.pop(context);
-                  // TODO: navigate to edit post screen
+                  final phone = ref
+                      .read(phoneViewModelProvider)
+                      .phones
+                      .firstWhere((p) => p.phoneId == phoneId);
+                  AppRoutes.push(context, EditPostScreen(phone: phone));
                 },
               ),
               ListTile(
