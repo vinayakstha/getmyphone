@@ -1,7 +1,9 @@
+import 'package:client/app/routes/app_routes.dart';
 import 'package:client/core/api/api_endpoints.dart';
 import 'package:client/core/services/storage/user_session_service.dart';
 import 'package:client/features/auth/presentation/pages/login_screen.dart';
 import 'package:client/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:client/features/profile/presentation/pages/edit_profile_screen.dart';
 import 'package:client/features/profile/presentation/widgets/profile_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -133,7 +135,8 @@ class ProfileScreen extends ConsumerWidget {
                       ProfileTile(
                         icon: Icons.person_outline,
                         title: "Edit Profile",
-                        onTap: () {},
+                        onTap: () =>
+                            AppRoutes.push(context, const EditProfileScreen()),
                       ),
                       ProfileTile(
                         icon: Icons.lock_outline,
