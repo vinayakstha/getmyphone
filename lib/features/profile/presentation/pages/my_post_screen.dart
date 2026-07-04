@@ -3,7 +3,6 @@ import 'package:client/core/api/api_endpoints.dart';
 import 'package:client/features/phone/presentation/pages/phone_details_screen.dart';
 import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
-import 'package:client/features/phone/presentation/widgets/phone_card.dart';
 import 'package:client/core/utils/snackbar_utils.dart';
 import 'package:client/features/profile/presentation/widgets/my_post_card.dart';
 import 'package:flutter/material.dart';
@@ -92,23 +91,19 @@ class _MyPostsScreenState extends ConsumerState<MyPostsScreen> {
               await ref
                   .read(phoneViewModelProvider.notifier)
                   .deletePhone(phoneId);
+              if (!mounted) return; // add this
               final phoneState = ref.read(phoneViewModelProvider);
               if (phoneState.status == PhoneStatus.deleted) {
-                if (mounted) {
-                  SnackbarUtils.showSuccess(
-                    context,
-                    'Listing deleted successfully!',
-                  );
-                  // refresh list
-                  ref.read(phoneViewModelProvider.notifier).getPhonesBySeller();
-                }
+                SnackbarUtils.showSuccess(
+                  context,
+                  'Listing deleted successfully!',
+                );
+                ref.read(phoneViewModelProvider.notifier).getPhonesBySeller();
               } else if (phoneState.status == PhoneStatus.error) {
-                if (mounted) {
-                  SnackbarUtils.showError(
-                    context,
-                    phoneState.errorMessage ?? 'Failed to delete listing',
-                  );
-                }
+                SnackbarUtils.showError(
+                  context,
+                  phoneState.errorMessage ?? 'Failed to delete listing',
+                );
               }
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
