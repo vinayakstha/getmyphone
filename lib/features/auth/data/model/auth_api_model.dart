@@ -28,8 +28,21 @@ class AuthApiModel {
     this.ratingCount = 0,
   });
 
-  factory AuthApiModel.fromJson(Map<String, dynamic> json) =>
-      _$AuthApiModelFromJson(json);
+  // manually parse nested rating object
+  factory AuthApiModel.fromJson(Map<String, dynamic> json) {
+    final rating = json['rating'] as Map<String, dynamic>?;
+    return AuthApiModel(
+      id: json['_id'] as String?,
+      fullName: json['fullName'] as String,
+      email: json['email'] as String,
+      phoneNumber: json['phoneNumber'] as String,
+      password: json['password'] as String? ?? '',
+      confirmPassword: json['confirmPassword'] as String?,
+      profilePicture: json['profilePicture'] as String?,
+      ratingAverage: (rating?['average'] as num?)?.toDouble() ?? 0,
+      ratingCount: (rating?['count'] as num?)?.toInt() ?? 0,
+    );
+  }
 
   Map<String, dynamic> toJson() => _$AuthApiModelToJson(this);
 
