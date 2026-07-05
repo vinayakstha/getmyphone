@@ -33,6 +33,10 @@ class ApiEndpoints {
   static const String register = '/auth/register';
   static const String login = '/auth/login';
 
+  //============= User Endpoints ============
+  static const String updateProfile = '/user/update-profile';
+  static const String getCurrentUser = '/user/me';
+
   // ============ Category Endpoints ==========
   static const String getAllCategories = '/category/';
   static const String getCategoryById = '/category/';
