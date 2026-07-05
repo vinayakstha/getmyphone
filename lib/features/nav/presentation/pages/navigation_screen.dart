@@ -1,4 +1,5 @@
 import 'package:client/app/routes/app_routes.dart';
+import 'package:client/features/chat/presentation/pages/chat_screen.dart';
 import 'package:client/features/home/presentation/pages/home_screen.dart';
 import 'package:client/features/phone/presentation/pages/post_form_screen_one.dart';
 import 'package:client/features/profile/presentation/pages/profile_screen.dart';
@@ -17,7 +18,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const Scaffold(body: Center(child: Text('Chat'))),
+    const ChatScreen(),
     const SavedScreen(),
     const ProfileScreen(),
   ];
