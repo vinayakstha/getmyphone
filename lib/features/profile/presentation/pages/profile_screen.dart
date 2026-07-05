@@ -27,13 +27,14 @@ class ProfileScreen extends ConsumerWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
+        centerTitle: false,
         backgroundColor: Colors.white,
         title: const Text(
           "Profile",
           style: TextStyle(
             color: Colors.black,
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
+            fontSize: 28,
           ),
         ),
       ),
