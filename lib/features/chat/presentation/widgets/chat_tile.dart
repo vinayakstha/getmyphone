@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatTile extends StatelessWidget {
   final String? image;
-  final String phoneName;
   final String senderName;
   final String lastMessage;
   final Timestamp? lastMessageTime;
@@ -14,7 +13,6 @@ class ChatTile extends StatelessWidget {
   const ChatTile({
     super.key,
     this.image,
-    required this.phoneName,
     required this.senderName,
     required this.lastMessage,
     this.lastMessageTime,
@@ -88,17 +86,6 @@ class ChatTile extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
-
-                  const SizedBox(height: 3),
-
-                  Text(
-                    phoneName,
-                    style: TextStyle(
-                      color: Colors.blue.shade700,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
                   ),
 
                   const SizedBox(height: 4),

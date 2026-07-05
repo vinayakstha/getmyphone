@@ -115,8 +115,6 @@ class ChatListScreen extends ConsumerWidget {
                           data['${otherUserId}_name'] ?? 'Unknown';
                       final otherUserPhoto =
                           data['${otherUserId}_photo'] as String?;
-                      final phoneTitle = data['phoneTitle'] ?? '';
-                      final phoneId = data['phoneId'] ?? '';
                       final lastMessage = data['lastMessage'] ?? '';
                       final lastMessageTime =
                           data['lastMessageTime'] as Timestamp?;
@@ -125,7 +123,6 @@ class ChatListScreen extends ConsumerWidget {
                         image: otherUserPhoto != null
                             ? ApiEndpoints.imageBaseUrl + otherUserPhoto
                             : null,
-                        phoneName: phoneTitle,
                         senderName: otherUserName,
                         lastMessage: lastMessage,
                         lastMessageTime: lastMessageTime,
@@ -135,8 +132,6 @@ class ChatListScreen extends ConsumerWidget {
                             ChatScreen(
                               receiverId: otherUserId,
                               receiverName: otherUserName,
-                              phoneId: phoneId,
-                              phoneTitle: phoneTitle,
                             ),
                           );
                         },

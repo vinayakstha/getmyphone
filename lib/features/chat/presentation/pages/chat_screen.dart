@@ -7,15 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ChatScreen extends ConsumerStatefulWidget {
   final String receiverId;
   final String receiverName;
-  final String phoneId;
-  final String phoneTitle;
 
   const ChatScreen({
     super.key,
     required this.receiverId,
     required this.receiverName,
-    required this.phoneId,
-    required this.phoneTitle,
   });
 
   @override
@@ -36,7 +32,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _currentUserName = session.getUserFullName() ?? '';
     _chatId = ref
         .read(chatServiceProvider)
-        .getChatId(_currentUserId, widget.receiverId, widget.phoneId);
+        .getChatId(_currentUserId, widget.receiverId);
   }
 
   @override
@@ -61,8 +57,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           receiverId: widget.receiverId,
           receiverName: widget.receiverName,
           message: message,
-          phoneId: widget.phoneId,
-          phoneTitle: widget.phoneTitle,
           senderPhoto: session.getUserProfilePicture(),
         );
   }
@@ -75,22 +69,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.receiverName,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            Text(
-              widget.phoneTitle,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ],
+        title: Text(
+          widget.receiverName,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.black,
+          ),
         ),
       ),
       body: Column(
