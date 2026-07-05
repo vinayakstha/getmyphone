@@ -49,13 +49,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final message = _messageCtrl.text.trim();
     if (message.isEmpty) return;
     _messageCtrl.clear();
+
+    final session = ref.read(userSessionServiceProvider);
+
     await ref
         .read(chatServiceProvider)
         .sendMessage(
           chatId: _chatId,
           senderId: _currentUserId,
           senderName: _currentUserName,
+          receiverId: widget.receiverId,
+          receiverName: widget.receiverName,
           message: message,
+          phoneId: widget.phoneId,
+          phoneTitle: widget.phoneTitle,
+          senderPhoto: session.getUserProfilePicture(),
         );
   }
 

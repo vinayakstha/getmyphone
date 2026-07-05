@@ -17,7 +17,13 @@ class ChatService {
     required String chatId,
     required String senderId,
     required String senderName,
+    required String receiverId,
+    required String receiverName,
     required String message,
+    required String phoneId,
+    required String phoneTitle,
+    String? senderPhoto,
+    String? receiverPhoto,
   }) async {
     await _firestore
         .collection('chats')
@@ -30,11 +36,16 @@ class ChatService {
           'timestamp': FieldValue.serverTimestamp(),
         });
 
-    // update chat metadata
     await _firestore.collection('chats').doc(chatId).set({
       'lastMessage': message,
       'lastMessageTime': FieldValue.serverTimestamp(),
-      'participants': chatId.split('_').take(2).toList(),
+      'participants': [senderId, receiverId],
+      'phoneId': phoneId,
+      'phoneTitle': phoneTitle,
+      '${senderId}_name': senderName,
+      '${receiverId}_name': receiverName,
+      if (senderPhoto != null) '${senderId}_photo': senderPhoto,
+      if (receiverPhoto != null) '${receiverId}_photo': receiverPhoto,
     }, SetOptions(merge: true));
   }
 
