@@ -1,83 +1,215 @@
+import 'package:client/core/services/chat/chat_service.dart';
+import 'package:client/core/services/storage/user_session_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../widgets/chat_tile.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
+class ChatScreen extends ConsumerStatefulWidget {
+  final String receiverId;
+  final String receiverName;
+  final String phoneId;
+  final String phoneTitle;
+
+  const ChatScreen({
+    super.key,
+    required this.receiverId,
+    required this.receiverName,
+    required this.phoneId,
+    required this.phoneTitle,
+  });
+
+  @override
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends ConsumerState<ChatScreen> {
+  final _messageCtrl = TextEditingController();
+  late final String _chatId;
+  late final String _currentUserId;
+  late final String _currentUserName;
+
+  @override
+  void initState() {
+    super.initState();
+    final session = ref.read(userSessionServiceProvider);
+    _currentUserId = session.getUserId() ?? '';
+    _currentUserName = session.getUserFullName() ?? '';
+    _chatId = ref
+        .read(chatServiceProvider)
+        .getChatId(_currentUserId, widget.receiverId, widget.phoneId);
+  }
+
+  @override
+  void dispose() {
+    _messageCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendMessage() async {
+    final message = _messageCtrl.text.trim();
+    if (message.isEmpty) return;
+    _messageCtrl.clear();
+    await ref
+        .read(chatServiceProvider)
+        .sendMessage(
+          chatId: _chatId,
+          senderId: _currentUserId,
+          senderName: _currentUserName,
+          message: message,
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-
+      backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        centerTitle: false,
         backgroundColor: Colors.white,
-        title: const Text(
-          "Chat",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 28,
-          ),
-        ),
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
+        foregroundColor: Colors.black,
+        elevation: 0,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// Search Bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Search conversations...",
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
+            Text(
+              widget.receiverName,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.black,
               ),
             ),
-
-            const SizedBox(height: 20),
-
-            Expanded(
-              child: ListView(
-                children: const [
-                  ChatTile(
-                    image: "assets/images/iphone15.png",
-                    phoneName: "iPhone 15 Pro",
-                    senderName: "Michael Scott",
-                    lastMessage: "Is the iPhone 15 Pro still available?",
-                    time: "2m ago",
-                    online: true,
-                    unread: true,
-                  ),
-
-                  SizedBox(height: 10),
-
-                  ChatTile(
-                    image: "assets/images/samsung.png",
-                    phoneName: "Samsung S24 Ultra",
-                    senderName: "Sarah Jenkins",
-                    lastMessage: "Thanks!",
-                    time: "45m ago",
-                    online: false,
-                    unread: false,
-                  ),
-                ],
-              ),
+            Text(
+              widget.phoneTitle,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         ),
+      ),
+      body: Column(
+        children: [
+          // Messages
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: ref.read(chatServiceProvider).getMessages(_chatId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF1565D8)),
+                  );
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No messages yet.\nSay hello!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  );
+                }
+
+                final messages = snapshot.data!.docs;
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final data = messages[index].data() as Map<String, dynamic>;
+                    final isMe = data['senderId'] == _currentUserId;
+
+                    return Align(
+                      alignment: isMe
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isMe ? const Color(0xFF1565D8) : Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(16),
+                            topRight: const Radius.circular(16),
+                            bottomLeft: Radius.circular(isMe ? 16 : 0),
+                            bottomRight: Radius.circular(isMe ? 0 : 16),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          data['message'] ?? '',
+                          style: TextStyle(
+                            color: isMe ? Colors.white : Colors.black87,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+
+          // Input
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              boxShadow: [BoxShadow(blurRadius: 4, color: Colors.black12)],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageCtrl,
+                    decoration: InputDecoration(
+                      hintText: 'Type a message...',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    onSubmitted: (_) => _sendMessage(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: _sendMessage,
+                  child: Container(
+                    width: 46,
+                    height: 46,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF1565D8),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.send,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
