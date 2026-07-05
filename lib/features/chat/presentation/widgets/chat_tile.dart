@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatTile extends StatelessWidget {
-  final String image;
-  final String phoneName;
+  final String? image;
   final String senderName;
   final String lastMessage;
-  final String time;
-  final bool online;
+  final Timestamp? lastMessageTime;
   final bool unread;
   final VoidCallback? onTap;
 
   const ChatTile({
     super.key,
-    required this.image,
-    required this.phoneName,
+    this.image,
     required this.senderName,
     required this.lastMessage,
-    required this.time,
-    this.online = false,
+    this.lastMessageTime,
     this.unread = false,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final initial = senderName.isNotEmpty ? senderName[0].toUpperCase() : '?';
+    final timeStr = lastMessageTime != null
+        ? timeago.format(lastMessageTime!.toDate())
+        : '';
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
@@ -34,7 +37,7 @@ class ChatTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(.08),
+              color: Colors.grey.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -42,25 +45,20 @@ class ChatTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Stack(
-              children: [
-                CircleAvatar(radius: 30, backgroundImage: AssetImage(image)),
-
-                if (online)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: const Color(0xFF1565D8),
+              backgroundImage: image != null ? NetworkImage(image!) : null,
+              child: image == null
+                  ? Text(
+                      initial,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ),
-              ],
+                    )
+                  : null,
             ),
 
             const SizedBox(width: 14),
@@ -80,26 +78,14 @@ class ChatTile extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       Text(
-                        time,
+                        timeStr,
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontSize: 12,
                         ),
                       ),
                     ],
-                  ),
-
-                  const SizedBox(height: 3),
-
-                  Text(
-                    phoneName,
-                    style: TextStyle(
-                      color: Colors.blue.shade700,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
                   ),
 
                   const SizedBox(height: 4),
@@ -114,7 +100,6 @@ class ChatTile extends StatelessWidget {
                           style: TextStyle(color: Colors.grey.shade700),
                         ),
                       ),
-
                       if (unread)
                         Container(
                           width: 10,

@@ -30,14 +30,16 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         elevation: 0,
+        centerTitle: false,
+        backgroundColor: Colors.white,
         title: const Text(
-          'Saved',
+          "Saved",
           style: TextStyle(
-            fontWeight: FontWeight.bold,
             color: Colors.black,
-            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            fontSize: 28,
           ),
         ),
       ),

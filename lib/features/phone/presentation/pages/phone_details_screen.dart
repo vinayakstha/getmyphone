@@ -1,6 +1,8 @@
+import 'package:client/app/routes/app_routes.dart';
 import 'package:client/core/api/api_endpoints.dart';
 import 'package:client/core/services/storage/user_session_service.dart';
 import 'package:client/core/utils/snackbar_utils.dart';
+import 'package:client/features/chat/presentation/pages/chat_screen.dart';
 import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
 import 'package:client/features/phone/presentation/widgets/seller_profile_widget.dart';
@@ -214,7 +216,24 @@ class _PhoneDetailsScreenState extends ConsumerState<PhoneDetailsScreen> {
           children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  final session = ref.read(userSessionServiceProvider);
+                  final currentUserId = session.getUserId() ?? '';
+                  if (currentUserId == phone.sellerId) {
+                    SnackbarUtils.showError(
+                      context,
+                      'You cannot chat with yourself',
+                    );
+                    return;
+                  }
+                  AppRoutes.push(
+                    context,
+                    ChatScreen(
+                      receiverId: phone.sellerId,
+                      receiverName: phone.sellerName,
+                    ),
+                  );
+                },
                 icon: const Icon(Icons.chat_bubble_outline),
                 label: const Text("Chat"),
                 style: OutlinedButton.styleFrom(
