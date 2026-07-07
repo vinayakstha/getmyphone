@@ -181,6 +181,7 @@ class _PostFormScreenThreeState extends ConsumerState<PostFormScreenThree> {
         } else if (next.status == PhoneStatus.created) {
           SnackbarUtils.showSuccess(context, 'Phone ad posted successfully!');
           // pop all post form screens back to navigation screen
+          ref.read(phoneViewModelProvider.notifier).getAllPhones();
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
       }
