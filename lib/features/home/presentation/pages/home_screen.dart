@@ -37,13 +37,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // TOP BAR
-              Row(
+        child: Column(
+          children: [
+            // TOP BAR (sticky)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 0),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   RichText(
@@ -72,11 +71,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ],
               ),
+            ),
 
-              const SizedBox(height: 16),
-
-              // SEARCH BAR
-              Container(
+            // SEARCH BAR (sticky)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
@@ -90,78 +90,89 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
               ),
+            ),
 
-              const SizedBox(height: 16),
+            // SCROLLABLE CONTENT
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CardWidget(),
 
-              const CardWidget(),
+                    const SizedBox(height: 16),
 
-              const SizedBox(height: 16),
-
-              // CATEGORIES LABEL
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Browse by Brand",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                    // CATEGORIES LABEL
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Browse by Brand",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text(
+                            "View More",
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Color.fromARGB(255, 118, 116, 116),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      "View More",
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Color.fromARGB(255, 118, 116, 116),
-                        fontWeight: FontWeight.w500,
-                      ),
+
+                    const SizedBox(height: 12),
+
+                    // CATEGORY GRID
+                    _buildCategoryGrid(categoryState),
+
+                    const SizedBox(height: 20),
+
+                    // PHONES LABEL
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Latest Listings",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text(
+                            "View More",
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Color.fromARGB(255, 118, 116, 116),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 12),
+
+                    // PHONE GRID
+                    _buildPhoneGrid(phoneState),
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
-
-              const SizedBox(height: 12),
-
-              // CATEGORY GRID
-              _buildCategoryGrid(categoryState),
-
-              const SizedBox(height: 20),
-
-              // PHONES LABEL
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Latest Listings",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      "View More",
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Color.fromARGB(255, 118, 116, 116),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              // PHONE GRID
-              _buildPhoneGrid(phoneState),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
