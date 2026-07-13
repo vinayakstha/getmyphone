@@ -214,7 +214,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             ? FileImage(_selectedImage!)
                             : profilePicture != null
                             ? NetworkImage(
-                                    ApiEndpoints.imageBaseUrl + profilePicture,
+                                    ApiEndpoints.getImageUrl(profilePicture),
                                   )
                                   as ImageProvider
                             : null,

@@ -48,24 +48,32 @@ class ProfileScreen extends ConsumerWidget {
                 // Profile Header
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 38,
-                      backgroundColor: const Color(0xff1565D8),
-                      backgroundImage: profilePicture != null
-                          ? NetworkImage(
-                              ApiEndpoints.imageBaseUrl + profilePicture,
-                            )
-                          : null,
-                      child: profilePicture == null
-                          ? Text(
+                    SizedBox(
+                      width: 76,
+                      height: 76,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 38,
+                            backgroundColor: const Color(0xff1565D8),
+                            child: Text(
                               initial,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 34,
                                 fontWeight: FontWeight.w500,
                               ),
-                            )
-                          : null,
+                            ),
+                          ),
+                          if (profilePicture != null)
+                            CircleAvatar(
+                              radius: 38,
+                              backgroundImage: NetworkImage(
+                                ApiEndpoints.getImageUrl(profilePicture),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Column(

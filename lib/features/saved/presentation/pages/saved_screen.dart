@@ -97,7 +97,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
           final saved = savedState.savedListings[index];
           return PhoneCard(
             image: saved.phone.photo != null
-                ? ApiEndpoints.imageBaseUrl + saved.phone.photo!
+                ? ApiEndpoints.getImageUrl(saved.phone.photo!)
                 : '',
             condition: saved.phone.condition,
             title: saved.phone.title,

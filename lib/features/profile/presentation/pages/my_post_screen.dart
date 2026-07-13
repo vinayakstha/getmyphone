@@ -191,7 +191,7 @@ class _MyPostsScreenState extends ConsumerState<MyPostsScreen> {
           final phone = phoneState.phones[index];
           return MyPostCard(
             image: phone.photo != null
-                ? ApiEndpoints.imageBaseUrl + phone.photo!
+                ? ApiEndpoints.getImageUrl(phone.photo!)
                 : '',
             condition: phone.condition,
             title: phone.title,

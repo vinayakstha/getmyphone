@@ -182,7 +182,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 final phone = filteredPhones[index];
                 return PhoneCard(
                   image: phone.photo != null
-                      ? ApiEndpoints.imageBaseUrl + phone.photo!
+                      ? ApiEndpoints.getImageUrl(phone.photo!)
                       : '',
                   condition: phone.condition,
                   title: phone.title,
