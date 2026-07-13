@@ -9,6 +9,7 @@ import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
 import 'package:client/features/phone/presentation/widgets/phone_card.dart';
 import 'package:client/features/saved/presentation/view_model/saved_view_model.dart';
+import 'package:client/features/notification/presentation/pages/notification_screen.dart';
 import 'package:client/features/search/presentation/pages/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,7 +65,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () => AppRoutes.push(context, const NotificationScreen()),
                     icon: const Icon(
                       Icons.notifications_none,
                       color: Color.fromARGB(255, 118, 116, 116),
