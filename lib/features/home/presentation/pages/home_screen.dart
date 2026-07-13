@@ -7,6 +7,7 @@ import 'package:client/features/category/presentation/widgets/category_card.dart
 import 'package:client/features/phone/presentation/pages/phone_details_screen.dart';
 import 'package:client/features/phone/presentation/state/phone_state.dart';
 import 'package:client/features/phone/presentation/view_model/phone_view_model.dart';
+import 'package:client/features/phone/domain/entities/phone_entity.dart';
 import 'package:client/features/phone/presentation/widgets/phone_card.dart';
 import 'package:client/features/saved/presentation/view_model/saved_view_model.dart';
 import 'package:flutter/material.dart';
@@ -20,14 +21,31 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
       ref.read(categoryViewModelProvider.notifier).getAllCategories();
       ref.read(phoneViewModelProvider.notifier).getAllPhones();
-      ref.read(savedViewModelProvider.notifier).getSavedByUser(); // add this
+      ref.read(savedViewModelProvider.notifier).getSavedByUser();
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<PhoneEntity> _filterPhones(List<PhoneEntity> phones) {
+    if (_searchQuery.trim().isEmpty) return phones;
+    final query = _searchQuery.trim().toLowerCase();
+    return phones.where((phone) {
+      return phone.title.toLowerCase().contains(query);
+    }).toList();
   }
 
   @override
@@ -82,11 +100,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const TextField(
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) => setState(() => _searchQuery = value),
                   decoration: InputDecoration(
                     icon: Icon(Icons.search),
                     hintText: "Search for models, brands, or parts...",
                     border: InputBorder.none,
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 20),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _searchQuery = '');
+                            },
+                          )
+                        : null,
                   ),
                 ),
               ),
@@ -165,7 +194,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(height: 12),
 
                     // PHONE GRID
-                    _buildPhoneGrid(phoneState),
+                    _buildPhoneGrid(phoneState, _filterPhones(phoneState.phones)),
 
                     const SizedBox(height: 24),
                   ],
@@ -228,7 +257,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildPhoneGrid(PhoneState phoneState) {
+  Widget _buildPhoneGrid(PhoneState phoneState, List<PhoneEntity> filteredPhones) {
     if (phoneState.status == PhoneStatus.loading) {
       return const Center(
         child: CircularProgressIndicator(color: Color(0xFF0464D4)),
@@ -248,10 +277,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return const Center(child: Text('No phone listings found'));
     }
 
+    if (filteredPhones.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 40),
+        child: Center(
+          child: Column(
+            children: [
+              Icon(Icons.search_off, size: 64, color: Colors.grey.shade400),
+              const SizedBox(height: 12),
+              Text(
+                'No results for "$_searchQuery"',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Try adjusting your search terms',
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: phoneState.phones.length,
+      itemCount: filteredPhones.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12,
@@ -259,10 +315,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         childAspectRatio: 0.7,
       ),
       itemBuilder: (context, index) {
-        final phone = phoneState.phones[index];
-        final savedState = ref.watch(savedViewModelProvider); // add this watch
+        final phone = filteredPhones[index];
+        final savedState = ref.watch(savedViewModelProvider);
 
-        // in phone grid itemBuilder:
         return PhoneCard(
           image: phone.photo != null
               ? ApiEndpoints.imageBaseUrl + phone.photo!
