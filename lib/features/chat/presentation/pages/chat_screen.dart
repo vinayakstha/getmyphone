@@ -1,5 +1,6 @@
 import 'package:client/core/services/chat/chat_service.dart';
 import 'package:client/core/services/storage/user_session_service.dart';
+import 'package:client/core/api/api_endpoints.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -72,14 +73,56 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: Text(
-          widget.receiverName,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black,
-          ),
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            // Profile avatar
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: const Color(0xFF1565D8),
+                  child: Text(
+                    widget.receiverName.isNotEmpty
+                        ? widget.receiverName[0].toUpperCase()
+                        : '?',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                if (widget.receiverPhoto != null)
+                  CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: NetworkImage(
+                      ApiEndpoints.getImageUrl(widget.receiverPhoto),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                widget.receiverName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: Column(
         children: [
