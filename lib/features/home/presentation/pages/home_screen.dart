@@ -231,7 +231,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       itemBuilder: (context, index) {
         final category = categoryState.categories[index];
         return CategoryCard(
-          imagePath: ApiEndpoints.imageBaseUrl + category.image,
+          imagePath: ApiEndpoints.getImageUrl(category.image),
           category: category.name,
           categoryId: category.categoryId ?? '',
         );
@@ -275,7 +275,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
         return PhoneCard(
           image: phone.photo != null
-              ? ApiEndpoints.imageBaseUrl + phone.photo!
+              ? ApiEndpoints.getImageUrl(phone.photo!)
               : '',
           condition: phone.condition,
           title: phone.title,

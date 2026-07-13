@@ -45,20 +45,31 @@ class ChatTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: const Color(0xFF1565D8),
-              backgroundImage: image != null ? NetworkImage(image!) : null,
-              child: image == null
-                  ? Text(
+            SizedBox(
+              width: 60,
+              height: 60,
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: const Color(0xFF1565D8),
+                    child: Text(
                       initial,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
-                    )
-                  : null,
+                    ),
+                  ),
+                  if (image != null)
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.transparent,
+                      backgroundImage: NetworkImage(image!),
+                    ),
+                ],
+              ),
             ),
 
             const SizedBox(width: 14),

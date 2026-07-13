@@ -7,11 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ChatScreen extends ConsumerStatefulWidget {
   final String receiverId;
   final String receiverName;
+  final String? receiverPhoto;
 
   const ChatScreen({
     super.key,
     required this.receiverId,
     required this.receiverName,
+    this.receiverPhoto,
   });
 
   @override
@@ -58,6 +60,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           receiverName: widget.receiverName,
           message: message,
           senderPhoto: session.getUserProfilePicture(),
+          receiverPhoto: widget.receiverPhoto,
         );
   }
 

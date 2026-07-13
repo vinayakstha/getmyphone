@@ -325,7 +325,7 @@ class _EditPostScreenState extends ConsumerState<EditPostScreen> {
                       ? Image.file(_selectedImage!, fit: BoxFit.cover)
                       : widget.phone.photo != null
                           ? Image.network(
-                              ApiEndpoints.imageBaseUrl + widget.phone.photo!,
+                              ApiEndpoints.getImageUrl(widget.phone.photo!),
                               fit: BoxFit.cover,
                               errorBuilder: (_, __, ___) => const Icon(
                                 Icons.phone_android,

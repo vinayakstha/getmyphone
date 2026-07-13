@@ -121,7 +121,7 @@ class ChatListScreen extends ConsumerWidget {
 
                       return ChatTile(
                         image: otherUserPhoto != null
-                            ? ApiEndpoints.imageBaseUrl + otherUserPhoto
+                            ? ApiEndpoints.getImageUrl(otherUserPhoto)
                             : null,
                         senderName: otherUserName,
                         lastMessage: lastMessage,
@@ -132,6 +132,7 @@ class ChatListScreen extends ConsumerWidget {
                             ChatScreen(
                               receiverId: otherUserId,
                               receiverName: otherUserName,
+                              receiverPhoto: otherUserPhoto,
                             ),
                           );
                         },

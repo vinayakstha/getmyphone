@@ -97,7 +97,7 @@ class _CategoryPhonesScreenState extends ConsumerState<CategoryPhonesScreen> {
           final phone = phoneState.phones[index];
           return PhoneCard(
             image: phone.photo != null
-                ? ApiEndpoints.imageBaseUrl + phone.photo!
+                ? ApiEndpoints.getImageUrl(phone.photo!)
                 : '',
             condition: phone.condition,
             title: phone.title,

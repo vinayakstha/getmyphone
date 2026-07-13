@@ -67,7 +67,7 @@ class _PhoneDetailsScreenState extends ConsumerState<PhoneDetailsScreen> {
                 backgroundColor: Colors.grey.shade200,
                 backgroundImage: phone.sellerProfilePicture != null
                     ? NetworkImage(
-                        ApiEndpoints.imageBaseUrl + phone.sellerProfilePicture!,
+                        ApiEndpoints.getImageUrl(phone.sellerProfilePicture!),
                       )
                     : null,
                 child: phone.sellerProfilePicture == null
@@ -231,6 +231,7 @@ class _PhoneDetailsScreenState extends ConsumerState<PhoneDetailsScreen> {
                     ChatScreen(
                       receiverId: phone.sellerId,
                       receiverName: phone.sellerName,
+                      receiverPhoto: phone.sellerProfilePicture,
                     ),
                   );
                 },
@@ -271,7 +272,7 @@ class _PhoneDetailsScreenState extends ConsumerState<PhoneDetailsScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: phone.photo != null
                         ? Image.network(
-                            ApiEndpoints.imageBaseUrl + phone.photo!,
+                            ApiEndpoints.getImageUrl(phone.photo!),
                             height: 220,
                             width: double.infinity,
                             fit: BoxFit.cover,
@@ -364,7 +365,7 @@ class _PhoneDetailsScreenState extends ConsumerState<PhoneDetailsScreen> {
               ratingAverage: phone.sellerRatingAverage,
               ratingCount: phone.sellerRatingCount,
               profilePicture: phone.sellerProfilePicture != null
-                  ? ApiEndpoints.imageBaseUrl + phone.sellerProfilePicture!
+                  ? ApiEndpoints.getImageUrl(phone.sellerProfilePicture!)
                   : null,
               onTap: () => _showSellerBottomSheet(context),
             ),

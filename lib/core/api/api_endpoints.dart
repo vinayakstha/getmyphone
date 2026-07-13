@@ -16,11 +16,11 @@ class ApiEndpoints {
       return "http://$compIpAddress:5050/api";
     }
     if (kIsWeb) {
-      return "http://localhost:3000/api";
+      return "http://localhost:5050/api";
     } else if (Platform.isAndroid) {
       return "http://10.0.2.2:5050/api";
     } else if (Platform.isIOS) {
-      return "http://localhost:3000/api";
+      return "http://localhost:5050/api";
     } else {
       return "http://10.0.2.2:5050/api";
     }
@@ -64,9 +64,14 @@ class ApiEndpoints {
     if (imagePath == null || imagePath.isEmpty) {
       return '';
     }
-    if (imagePath.startsWith('http')) {
-      return imagePath;
+    // Strip scheme and host if it is a full URL, keep just the path
+    String path = imagePath;
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      final uri = Uri.tryParse(path);
+      if (uri != null) {
+        path = uri.path;
+      }
     }
-    return '${baseUrl.replaceAll('/api', '')}$imagePath';
+    return '${baseUrl.replaceAll('/api', '')}$path';
   }
 }
