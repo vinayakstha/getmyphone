@@ -276,7 +276,7 @@ class _PhoneDetailsScreenState extends ConsumerState<PhoneDetailsScreen> {
                             height: 220,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            errorBuilder: (_, _, _) => Container(
                               height: 220,
                               color: Colors.grey.shade200,
                               child: const Icon(
@@ -421,21 +421,33 @@ class _PhoneDetailsScreenState extends ConsumerState<PhoneDetailsScreen> {
                                   physics: const NeverScrollableScrollPhysics(),
                                   childAspectRatio: 2.8,
                                   children: [
-                                    SpecItem(title: "CPU", value: phone.cpu),
                                     SpecItem(
+                                      icon: Icons.memory,
+                                      title: "CPU",
+                                      value: phone.cpu,
+                                    ),
+                                    SpecItem(
+                                      icon: Icons.battery_charging_full,
                                       title: "Battery",
                                       value: phone.battery,
                                     ),
-                                    SpecItem(title: "RAM", value: phone.ram),
                                     SpecItem(
+                                      icon: Icons.sd_storage,
+                                      title: "RAM",
+                                      value: phone.ram,
+                                    ),
+                                    SpecItem(
+                                      icon: Icons.screen_lock_portrait,
                                       title: "Screen",
                                       value: phone.screen,
                                     ),
                                     SpecItem(
+                                      icon: Icons.camera_alt,
                                       title: "Camera",
                                       value: phone.camera,
                                     ),
                                     SpecItem(
+                                      icon: Icons.storage,
                                       title: "Storage",
                                       value: phone.storage,
                                     ),
@@ -510,16 +522,31 @@ class Bullet extends StatelessWidget {
 }
 
 class SpecItem extends StatelessWidget {
+  final IconData icon;
   final String title;
   final String value;
-  const SpecItem({super.key, required this.title, required this.value});
+  const SpecItem({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+        Row(
+          children: [
+            Icon(icon, size: 13, color: Colors.grey),
+            const SizedBox(width: 4),
+            Text(
+              title,
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          ],
+        ),
         const SizedBox(height: 4),
         Text(
           value,
