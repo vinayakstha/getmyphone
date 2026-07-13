@@ -231,6 +231,7 @@ class _PhoneDetailsScreenState extends ConsumerState<PhoneDetailsScreen> {
                     ChatScreen(
                       receiverId: phone.sellerId,
                       receiverName: phone.sellerName,
+                      receiverPhoto: phone.sellerProfilePicture,
                     ),
                   );
                 },

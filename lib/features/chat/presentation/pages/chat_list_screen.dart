@@ -132,6 +132,7 @@ class ChatListScreen extends ConsumerWidget {
                             ChatScreen(
                               receiverId: otherUserId,
                               receiverName: otherUserName,
+                              receiverPhoto: otherUserPhoto,
                             ),
                           );
                         },
